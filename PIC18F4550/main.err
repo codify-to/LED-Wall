@@ -1,0 +1,3 @@
+Warning[2058] C:\Users\user\Documents\Money Projects\COMMIT\PIC18F4550\LCD_16x2_Pic18.h 238 : call of function without prototype
+Warning[2058] C:\Users\user\Documents\Money Projects\COMMIT\PIC18F4550\main.c 57 : call of function without prototype
+Warning[2066] C:\Users\user\Documents\Money Projects\COMMIT\PIC18F4550\main.c 65 : type qualifier mismatch in assignment

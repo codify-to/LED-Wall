@@ -1,0 +1,109 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.5.4	//
+!_TAG_REVISION_NAME	MCHPTags	//
+!_TAG_REVISION_VERSION	6.0.1	//
+AMP1::PORTBbits.RB6	C:\liveclass_software\second\main.c	35;"	d	line:35	file:
+AMP2::PORTEbits.RE0	C:\liveclass_software\second\main.c	36;"	d	line:36	file:
+BLINK::0x01	C:\liveclass_software\second\LCD4BITS.c	16;"	d	line:16	file:
+CH1::PORTCbits.RC4	C:\liveclass_software\second\main.c	30;"	d	line:30	file:
+CH2::PORTCbits.RC5	C:\liveclass_software\second\main.c	31;"	d	line:31	file:
+CTRL_REG::0	C:\liveclass_software\second\LCD4BITS.c	14;"	d	line:14	file:
+DATA_REG::1	C:\liveclass_software\second\LCD4BITS.c	15;"	d	line:15	file:
+DELAY	C:\liveclass_software\second\LCD4BITS.c	50;"	v	line:50
+Delay100TCYx	C:\mcc18\h\delays.h	39;"	p	line:39	signature:(PARAM_SCLASS unsigned char)
+Delay10KTCYx	C:\mcc18\h\delays.h	53;"	p	line:53	signature:(PARAM_SCLASS unsigned char)
+Delay10TCY::Delay10TCYx(1)	C:\mcc18\h\delays.h	24;"	d	line:24
+Delay10TCYx	C:\mcc18\h\delays.h	32;"	p	line:32	signature:(PARAM_SCLASS unsigned char)
+Delay1KTCYx	C:\mcc18\h\delays.h	46;"	p	line:46	signature:(PARAM_SCLASS unsigned char)
+Delay1TCY::Nop	C:\mcc18\h\delays.h	19;"	d	line:19
+ENCODER	C:\liveclass_software\second\main.c	64;"	v	line:64
+EOF::((int)-1)	C:\mcc18\h\stdio.h	12;"	d	line:12
+FILE	C:\mcc18\h\stdio.h	15;"	t	line:15
+HIDE::0x00	C:\liveclass_software\second\LCD4BITS.c	19;"	d	line:19	file:
+HIIMP1::PORTAbits.RA2	C:\liveclass_software\second\main.c	39;"	d	line:39	file:
+HIIMP2::PORTEbits.RE2	C:\liveclass_software\second\main.c	42;"	d	line:42	file:
+InterruptHandlerHigh	C:\liveclass_software\second\main.c	351;"	f	line:351
+InterruptHandlerHigh	C:\liveclass_software\second\main.c	50;"	p	line:50	file:	signature:(void)
+InterruptVectorHigh	C:\liveclass_software\second\main.c	336;"	f	line:336	signature:(void)
+LCD::PORTBbits.RB5	C:\liveclass_software\second\main.c	34;"	d	line:34	file:
+LCD_DATA::PORTD	C:\liveclass_software\second\LCD4BITS.c	11;"	d	line:11	file:
+LCD_E::PORTDbits.RD2	C:\liveclass_software\second\LCD4BITS.c	13;"	d	line:13	file:
+LCD_RS::PORTDbits.RD3	C:\liveclass_software\second\LCD4BITS.c	12;"	d	line:12	file:
+LCD_printxy	C:\liveclass_software\second\LCD4BITS.c	316;"	f	line:316	signature:(unsigned char x,unsigned char y, unsigned char *text)
+LCD_printxy	C:\liveclass_software\second\LCD4BITS.c	32;"	p	line:32	file:	signature:(unsigned char x,unsigned char y, unsigned char *text)
+LCD_printxy_rom	C:\liveclass_software\second\LCD4BITS.c	328;"	f	line:328	signature:(unsigned char x,unsigned char y, unsigned rom char *text)
+LCD_putchar	C:\liveclass_software\second\LCD4BITS.c	281;"	f	line:281	signature:(unsigned char value)
+LCD_putchar	C:\liveclass_software\second\LCD4BITS.c	30;"	p	line:30	file:	signature:(unsigned char value)
+LOCATION	C:\liveclass_software\second\LCD4BITS.c	45;"	v	line:45	file:
+LOWIMP1::PORTAbits.RA1	C:\liveclass_software\second\main.c	38;"	d	line:38	file:
+LOWIMP2::PORTEbits.RE1	C:\liveclass_software\second\main.c	41;"	d	line:41	file:
+MEM_MODEL::far	C:\mcc18\h\stdio.h	10;"	d	line:10
+MIC1::PORTAbits.RA0	C:\liveclass_software\second\main.c	37;"	d	line:37	file:
+MIC2::PORTEbits.RE0	C:\liveclass_software\second\main.c	40;"	d	line:40	file:
+NEXT::PORTCbits.RC6	C:\liveclass_software\second\main.c	33;"	d	line:33	file:
+NOBLINK::0x00	C:\liveclass_software\second\LCD4BITS.c	17;"	d	line:17	file:
+OFF::0x00	C:\liveclass_software\second\LCD4BITS.c	21;"	d	line:21	file:
+ON::0x04	C:\liveclass_software\second\LCD4BITS.c	20;"	d	line:20	file:
+PARAM_SCLASS::auto	C:\mcc18\h\delays.h	21;"	d	line:21
+PREV::PORTCbits.RC7	C:\liveclass_software\second\main.c	32;"	d	line:32	file:
+PWM	C:\liveclass_software\second\main.c	45;"	v	line:45
+SHOW::0x02	C:\liveclass_software\second\LCD4BITS.c	18;"	d	line:18	file:
+SWICH::PORTC	C:\liveclass_software\second\main.c	28;"	d	line:28	file:
+_H_USART::((FILE*)((int)-2))	C:\mcc18\h\stdio.h	19;"	d	line:19
+_H_USER::((FILE*)((int)-1))	C:\mcc18\h\stdio.h	18;"	d	line:18
+__DELAYS_H	C:\mcc18\h\delays.h	2;"	d	line:2
+__STDIO_H	C:\mcc18\h\stdio.h	2;"	d	line:2
+actual_encoder	C:\liveclass_software\second\main.c	88;"	l	line:88
+ajusta_hora	C:\liveclass_software\second\main.c	57;"	v	line:57
+blink	C:\liveclass_software\second\main.c	86;"	v	line:86
+blinkprescaler	C:\liveclass_software\second\main.c	48;"	v	line:48
+buffer	C:\liveclass_software\second\main.c	49;"	v	line:49
+chaveamento	C:\liveclass_software\second\main.c	82;"	s	line:82	file:
+clrscr	C:\liveclass_software\second\LCD4BITS.c	248;"	f	line:248	signature:(void)
+clrscr	C:\liveclass_software\second\LCD4BITS.c	29;"	p	line:29	file:	signature:(void)
+control	C:\liveclass_software\second\LCD4BITS.c	171;"	l	line:171
+control_LCD	C:\liveclass_software\second\LCD4BITS.c	169;"	f	line:169	signature:(unsigned char dsp,unsigned char blink,unsigned char cursor)
+control_LCD	C:\liveclass_software\second\LCD4BITS.c	34;"	p	line:34	file:	signature:(unsigned char dsp,unsigned char blink,unsigned char cursor)
+delay	C:\liveclass_software\second\LCD4BITS.c	27;"	p	line:27	file:	signature:(unsigned int time_100us)
+delay	C:\liveclass_software\second\LCD4BITS.c	55;"	f	line:55	signature:(unsigned int time_100us)
+desligando	C:\liveclass_software\second\main.c	47;"	v	line:47
+encoders	C:\liveclass_software\second\main.c	61;"	s	line:61	file:
+fprintf	C:\mcc18\h\stdio.h	30;"	p	line:30	signature:(auto FILE *f, auto const MEM_MODEL rom char *fmt, ...)
+fputs	C:\mcc18\h\stdio.h	33;"	p	line:33	signature:(auto const MEM_MODEL rom char *s, auto FILE *f)
+gotoxy	C:\liveclass_software\second\LCD4BITS.c	213;"	f	line:213	signature:(unsigned char x,unsigned char y)
+gotoxy	C:\liveclass_software\second\LCD4BITS.c	36;"	p	line:36	file:	signature:(unsigned char x,unsigned char y)
+horas	C:\liveclass_software\second\main.c	52;"	v	line:52
+init_LCD	C:\liveclass_software\second\LCD4BITS.c	28;"	p	line:28	file:	signature:(void)
+init_LCD	C:\liveclass_software\second\LCD4BITS.c	77;"	f	line:77	signature:(void)
+key	C:\liveclass_software\second\main.c	84;"	m	line:84	struct:chaveamento	file:
+key1	C:\liveclass_software\second\main.c	85;"	v	line:85
+key2	C:\liveclass_software\second\main.c	85;"	v	line:85
+lcd_change	C:\liveclass_software\second\main.c	55;"	v	line:55
+ligado	C:\liveclass_software\second\main.c	59;"	v	line:59
+ligando	C:\liveclass_software\second\main.c	46;"	v	line:46
+main	C:\liveclass_software\second\main.c	87;"	f	line:87	signature:(void)
+minutos	C:\liveclass_software\second\main.c	53;"	v	line:53
+name	C:\liveclass_software\second\main.c	62;"	m	line:62	struct:encoders	file:
+on::PORTCbits.RC3	C:\liveclass_software\second\main.c	29;"	d	line:29	file:
+pisco	C:\liveclass_software\second\main.c	58;"	v	line:58
+pos	C:\liveclass_software\second\main.c	83;"	m	line:83	struct:chaveamento	file:
+printf	C:\mcc18\h\stdio.h	29;"	p	line:29	signature:(auto const MEM_MODEL rom char *fmt, ...)
+putc	C:\mcc18\h\stdio.h	25;"	p	line:25	signature:(auto char c, auto FILE *f)
+puts	C:\mcc18\h\stdio.h	32;"	p	line:32	signature:(auto const MEM_MODEL rom char *s)
+s	C:\liveclass_software\second\main.c	51;"	v	line:51
+segundos	C:\liveclass_software\second\main.c	54;"	v	line:54
+sleep	C:\liveclass_software\second\main.c	60;"	v	line:60
+sprintf	C:\mcc18\h\stdio.h	28;"	p	line:28	signature:(auto char *buf, auto const MEM_MODEL rom char *fmt, ...)
+time_change	C:\liveclass_software\second\main.c	56;"	v	line:56
+timer	C:\liveclass_software\second\main.c	180;"	l	line:180
+timer	C:\liveclass_software\second\main.c	209;"	l	line:209
+timer	C:\liveclass_software\second\main.c	235;"	l	line:235
+timer	C:\liveclass_software\second\main.c	260;"	l	line:260
+value	C:\liveclass_software\second\main.c	63;"	m	line:63	struct:encoders	file:
+vfprintf	C:\mcc18\h\stdio.h	31;"	p	line:31	signature:(auto FILE *f, auto const MEM_MODEL rom char *fmt, auto va_list ap)
+vprintf	C:\mcc18\h\stdio.h	27;"	p	line:27	signature:(auto const MEM_MODEL rom char *fmt, auto va_list ap)
+vsprintf	C:\mcc18\h\stdio.h	26;"	p	line:26	signature:(auto char *buf, auto const MEM_MODEL rom char *fmt, auto va_list ap)
