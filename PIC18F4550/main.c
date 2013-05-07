@@ -1,17 +1,17 @@
-#include <p18f4550.h>		//Definição do PIC
+#include <p18f4550.h>		//Definicao do PIC
 #include <delays.h>
 #include <spi.h>
 #include <string.h>
 #include <stdio.h>
-#include "LCD_16x2_Pic18.h"	//Inclusão do módulo para controle do LCD
+#include "LCD_16x2_Pic18.h"	//Inclusao do modulo para controle do LCD
 
-//Aqui o PIC é configurado para iniciar com osiclador interno (1Mhz).
+//Aqui o PIC Ã© configurado para iniciar com osiclador interno (1Mhz).
 //Ao inciar, ele acelera para 8Mhz
 #pragma config FOSC = INTOSC_HS		//Oscilador interno pro CPU, HS pro USB
 #pragma config CPUDIV = OSC1_PLL2	//CPU clock vem do PLL de 96 Mhz / 2 = 48Mhz
-#pragma config PLLDIV = 5			//Divisão de 5 para entrar no PLL, 20Mhz / 5 = 4Mhz
+#pragma config PLLDIV = 5			//Divisï¿½o de 5 para entrar no PLL, 20Mhz / 5 = 4Mhz
 #pragma config USBDIV=2				//Clock USB derivado do PLL / 2 = 48Mhz
-#pragma config LPT1OSC = OFF		//Modo High Power para o oscilador secundário
+#pragma config LPT1OSC = OFF		//Modo High Power para o oscilador secundï¿½rio
 #pragma config MCLRE = ON			//Master Clear Habilitado
 
 #pragma config IESO = ON			//Troca entre fontes de clock habilitada
@@ -21,11 +21,11 @@
 #pragma config BOR = OFF			//Brown out reset desligado
 #pragma config PBADEN = OFF			//Pinos RB0, 1, 2 3 e 4 como I/O digital (ADC desconectado)
 #pragma config LVP = OFF			//Single supply ICSP programming desligado
-#pragma config VREGEN = ON			//Regulador de tensão USB ligado
+#pragma config VREGEN = ON			//Regulador de tensï¿½o USB ligado
 
 char mensagem_lcd[17];		//Buffer para formatar os dados a mostrar no LCD
 
-void main ()				//Função primária
+void main ()				//Funï¿½ï¿½o primï¿½ria
 {
 
 	//Opera em 8Mhz se oscilador interno for escolhido
@@ -45,13 +45,13 @@ void main ()				//Função primária
 	PORTD=0b00000000;
 	PORTE=0b00000000;
 
-	//Direção dos ports
+	//Direï¿½ï¿½o dos ports
 	//		76543210
 	TRISA=0b00000000;
 	TRISB=0b00000001;	//RB0 SDI
 	TRISC=0b00000000;
 	TRISD=0b00000000;
-	TRISE=0b00000100;	//RE2 botão teste
+	TRISE=0b00000100;	//RE2 botï¿½o teste
 
 	// Inicia o LCD
 	lcd_start();	
@@ -59,24 +59,24 @@ void main ()				//Função primária
 	// Desliga o SPI
 	CloseSPI();	
 
-	//Abre SPI. 500Khz, Active High, Leitura no meio do período
+	//Abre SPI. 500Khz, Active High, Leitura no meio do perï¿½odo
 	OpenSPI(SPI_FOSC_4,MODE_00,SMPMID);	
 	
-	sprintf(mensagem_lcd, "    Bom dia! 6  ");  //Formata mensagem no buffer de dados
+	sprintf(mensagem_lcd, "    Bom bom! 6  ");  //Formata mensagem no buffer de dados
 	mostra_lcd_buff(1,1, mensagem_lcd,16);			//Exibe buffer de dados na tela
 
 	
 	while(1)
 	{
-		//Se apertou o botão...
+		//Se apertou o botï¿½o...
 		if(!PORTEbits.RE2)
 		{
 			//Seleciona Slave
 			LATAbits.LATA0 = 1;
 
-			//Primeiro byte informa quantos bytes serão enviados.
-			//Não podemos mandar MAIS ou MENOS do que o especificado
-			//se não o slave trava no loop de recepção.
+			//Primeiro byte informa quantos bytes serï¿½o enviados.
+			//Nï¿½o podemos mandar MAIS ou MENOS do que o especificado
+			//se nï¿½o o slave trava no loop de recepï¿½ï¿½o.
 			while(WriteSPI(4));				
 
 			//Demais bytes...
@@ -89,10 +89,10 @@ void main ()				//Função primária
 			//Desliga Slave
 			LATAbits.LATA0 = 0;	
 
-			//Delay para a próxima transmissão (não é necessário).
+			//Delay para a prï¿½xima transmissï¿½o (nï¿½o ï¿½ necessï¿½rio).
 			//Delay10KTCYx(10);	
 		}
-		else	//Se não...
+		else	//Se nï¿½o...
 		{
 			//Pisca a porra do led
 			Delay10KTCYx(10);
@@ -101,16 +101,16 @@ void main ()				//Função primária
 			
 	//Fim do loop infinito
 	}
-//Fim da função primária
+//Fim da funï¿½ï¿½o primï¿½ria
 }
 
 /*	------------------------------------------- GARBAGE -----------------------------------------------
 
 				
 				while(WriteSPI(0xF5));				//send initial charecter to use the same as flag at slave side and send it till successful transmision
-				while( SPI_Slave!= 0xF0 ) 		//Enquanto o slave não retornar o dado
+				while( SPI_Slave!= 0xF0 ) 		//Enquanto o slave nï¿½o retornar o dado
 				{
-					SPI_Slave = ReadSPI();		//Verificamos se o slave já retornou
+					SPI_Slave = ReadSPI();		//Verificamos se o slave jï¿½ retornou
 				}
 
 				putsSPI(SPI_Send);					//send the string of data to be sent to slave
