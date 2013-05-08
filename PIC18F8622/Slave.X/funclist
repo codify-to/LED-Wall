@@ -1,0 +1,19 @@
+_ctrl_lcd_cursor: CODE, 6914 0 60
+_tempo_us: CODE, 5882 0 260
+__stringdata: SMALLCONST, 4114 0 58
+_OpenSPI1: CODE, 6662 0 100
+_pos_lcd: CODE, 6394 0 160
+_lcd_start: CODE, 5070 0 408
+_dpowers: SMALLCONST, 4096 0 10
+_envia_lcd: CODE, 6142 0 252
+_main: CODE, 5478 0 404
+_mostra_lcd_buff: CODE, 6974 0 52
+__initialization: CODE, 6854 0 54
+___lwdiv: CODE, 6554 0 108
+_receiveData: CODE, 8 0 234
+_sprintf: CODE, 4174 0 896
+_hexpowers: SMALLCONST, 4106 0 8
+___lwmod: CODE, 6762 0 92
+_envia_dado: CODE, 7056 0 26
+_limpa_tela: CODE, 7026 0 30
+Total: 3212
