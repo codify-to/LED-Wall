@@ -33,11 +33,11 @@ void main ()
 
 	// Desliga o ADC
 	ADCON1bits.PCFG=0b1111;
-	
+
 	// Desliga o comparador
 	CMCONbits.CM=0b111;
 
-        //Limpeza dos ports:
+		//Limpeza dos ports:
 	//		76543210
 	PORTA=0b00000000;
 	PORTB=0b00000000;
@@ -54,47 +54,70 @@ void main ()
 	TRISE=0b00000100;	//RE2 botao teste
 
 	// Inicia o LCD
-	lcd_start();	
-	
+	lcd_start();
+
 	// Desliga o SPI
 	CloseSPI();
 
 	// Abre SPI. 500Khz, Active High, Leitura no meio do periodo
 	OpenSPI(SPI_FOSC_4,MODE_00,SMPMID);
-	
-	sprintf(mensagem_lcd, "Master          ");  //Formata mensagem no buffer de dados
-        mostra_lcd_buff(1,1, mensagem_lcd,16);      //Exibe buffer de dados na tela
 
-        int count = 0;
+	sprintf(mensagem_lcd, "Master          ");  //Formata mensagem no buffer de dados
+	mostra_lcd_buff(1,1, mensagem_lcd,16);      //Exibe buffer de dados na tela
+
+	unsigned char board = 0;
+	unsigned char x = 0;
+	unsigned char y = 0;
+	unsigned char color = 0;
+	unsigned char led_byte;
 
 	while(1)
 	{
 		//Se apertou o botão
 		if(!PORTEbits.RE2)
 		{
+                        sprintf(mensagem_lcd, "Botao  loop     ");  //Formata mensagem no buffer de dados
+                        mostra_lcd_buff(1,1, mensagem_lcd,16);
 			//Seleciona Slave
-                        //LAT - 1 ciclo write only
-                        //PORT - 2 ciclos, read-write.
+						//LAT - 1 ciclo write only
+						//PORT - 2 ciclos, read-write.
 			LATAbits.LATA0 = 1;
 
 			//Primeiro byte informa quantos bytes serao enviados.
 			//Nao podemos mandar MAIS ou MENOS do que o especificado
 			//se nao o slave trava no loop de recepcaoo.
-			while(WriteSPI(4));			
 
-			//Demais bytes...
-			while(WriteSPI(0xA8));
-			while(WriteSPI(0xF3));
-			while(WriteSPI(0xD1));
-			while(WriteSPI(0xE5));
-			//while(WriteSPI(0xC9));
+//                        while(WriteSPI(2)); // byte 0: number of bytes to be received by slave
+//
+//			while(WriteSPI(0x22)); // byte 1: led address
+//                        while(WriteSPI(0x7F)); // byte 2: intensity (sample 50%)
+
+
+			for (board = 0; board < 4; board++)
+			{
+				for(y = 0; y < 4; y++)
+				{
+					for(x = 0; x < 4; x++)
+					{
+						for (color = 0; color < 4; ++color)
+						{
+							while(WriteSPI(2)); // byte 0: number of bytes to be received by slave
+							led_byte = (board << 6) | (x << 4) | (y << 2) | color;
+							while(WriteSPI(led_byte)); // byte 1: led address
+							while(WriteSPI(0x7F)); // byte 2: intensity (sample 50%)
+
+							// Test delay
+							Delay10KTCYx(1);
+						}
+					}
+				}
+			}
 
 			//Desliga Slave
 			LATAbits.LATA0 = 0;
 
 			//Delay para a proxima transmissao
 			Delay10KTCYx(10);
-                        count++;
 		}
 		else
 		{
