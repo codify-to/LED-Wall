@@ -1,8 +1,8 @@
-//----------------------------- Módulo para Displays LCD --------------------------------//
+//----------------------------- Mï¿½dulo para Displays LCD --------------------------------//
 
-#include<delays.h> //Biblioteca necessária para gerar o delay
+#include<delays.h> //Biblioteca necessï¿½ria para gerar o delay
 
-//----------------------------- Configuração de Hardware -------------------------------//
+//----------------------------- Configuraï¿½ï¿½o de Hardware -------------------------------//
 
 //Pinos do LCD
 
@@ -17,7 +17,7 @@
 
 void lcd_start();
 void limpa_tela ();
-void mostra_lcd_string(char line, char column, rom char *p_char);
+void mostra_lcd_string(char line, char column, char *p_char);
 void mostra_lcd_buff(char line, char column, char *p_char, char buffer_size);
 
 
@@ -93,7 +93,7 @@ void tempo_us(int tempo)// Gera 1*X us de delay.
 
 void envia_lcd (char byte, char cmd_data, int delay)
 {
-	RS = cmd_data; //Informa se é um comando ou dado.
+	RS = cmd_data; //Informa se ï¿½ um comando ou dado.
 
     DB7 = byte>>7;	//Envia bit 7 
     DB6 = byte>>6;	//Envia bit 6 
@@ -109,7 +109,7 @@ void envia_lcd (char byte, char cmd_data, int delay)
                         
     E=1; tempo_us(2);E=0; //Habilta, espera 2uS, desabilita LCD
                 
-    tempo_us(delay); //Delay necessário para comando enviado
+    tempo_us(delay); //Delay necessï¿½rio para comando enviado
 }
 
 //Cursor L1, C1
@@ -150,7 +150,7 @@ void ctrl_lcd_cursor (char controle)
     envia_lcd (comando[controle],0,40);
 }
 
-//Coloca o cursor em uma determinada posição do LCD.
+//Coloca o cursor em uma determinada posiï¿½ï¿½o do LCD.
 void pos_lcd(char line, char column)
 {
 	if(line==1)
@@ -163,14 +163,14 @@ void pos_lcd(char line, char column)
 	envia_lcd ((0xd4+column-1),0,40); 
 }
 
-//Escreve um caractere ou símbolo no display.
+//Escreve um caractere ou sï¿½mbolo no display.
 void envia_dado(char dado)
 {
         envia_lcd (dado,1,45);
 }
 
 //Mostra diretamente no LCD a string desejada
-void mostra_lcd_string(char line, char column, rom char *p_char)
+void mostra_lcd_string(char line, char column, char *p_char)
 {
 	pos_lcd(line, column);
 
@@ -193,7 +193,7 @@ void mostra_lcd_buff(char line, char column, char *p_char, char buffer_size)
 	}
 }
 
-//Inicializa o LCD. Configuração padrão:
+//Inicializa o LCD. Configuraï¿½ï¿½o padrï¿½o:
 //lcd_start(0x28, 0x0F, 0x06);
 //4 vias (DB7 ~ DB4)
 //Duas linhas (16x2, 20x2, etc...)
