@@ -18,6 +18,8 @@ Version 3.2 HI-TECH Software Intermediate Code
 [n S154 . . . . . . . ]
 "3211 /Applications/microchip/xc8/v1.12/include/pic18f8622.h
 [v _PORTDbits `VS154 ~T0 @X0 0 e@3971 ]
+[s S805 `ui 1 `ui 1 `ui 1 `uc 1 ]
+[n S805 . x y color intensity ]
 [s S376 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
 [n S376 . TMR1IF TMR2IF CCP1IF SSP1IF TX1IF RC1IF ADIF PSPIF ]
 [s S377 :3 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
@@ -211,36 +213,24 @@ Version 3.2 HI-TECH Software Intermediate Code
 [n S707 . . . . . . ]
 "13607
 [v _INTCONbits `VS707 ~T0 @X0 0 e@4082 ]
+"15105
+[v _PEIE `Vb ~T0 @X0 0 e@32662 ]
 "11032
 [v _SSP1CON1 `Vuc ~T0 @X0 0 e@4038 ]
 "238 /Applications/microchip/xc8/v1.12/include/plib/spi.h
 [v _OpenSPI1 `(v ~T0 @X0 0 ef3`uc`uc`uc ]
-[s S379 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
-[n S379 . TMR1IP TMR2IP CCP1IP SSP1IP TX1IP RC1IP ADIP PSPIP ]
-[s S380 :3 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
-[n S380 . . SSPIP TXIP RCIP ]
-[u S378 `S379 1 `S380 1 ]
-[n S378 . . . ]
-"7895 /Applications/microchip/xc8/v1.12/include/pic18f8622.h
-[v _IPR1bits `VS378 ~T0 @X0 0 e@3999 ]
 [s S373 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
 [n S373 . TMR1IE TMR2IE CCP1IE SSP1IE TX1IE RC1IE ADIE PSPIE ]
 [s S374 :3 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
 [n S374 . . SSPIE TXIE RCIE ]
 [u S372 `S373 1 `S374 1 ]
 [n S372 . . . ]
-"7731
+"7731 /Applications/microchip/xc8/v1.12/include/pic18f8622.h
 [v _PIE1bits `VS372 ~T0 @X0 0 e@3997 ]
 "205 /Applications/microchip/xc8/v1.12/include/stdio.h
 [v _sprintf `(i ~T0 @X0 0 e1v`*uc`*Cuc ]
-[s S692 :3 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
-[n S692 . T0PS PSA T0SE T0CS T08BIT TMR0ON ]
-[s S693 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
-[n S693 . T0PS0 T0PS1 T0PS2 T0PS3 ]
-[u S691 `S692 1 `S693 1 ]
-[n S691 . . . ]
-"13046 /Applications/microchip/xc8/v1.12/include/pic18f8622.h
-[v _T0CONbits `VS691 ~T0 @X0 0 e@4053 ]
+"36 /Applications/microchip/xc8/v1.12/include/delays.h
+[v _Delay10KTCYx `(v ~T0 @X0 0 ef1`uc ]
 [; ;pic18f8622.h: 44: extern volatile unsigned char SSP2CON2 @ 0xF62;
 "46 /Applications/microchip/xc8/v1.12/include/pic18f8622.h
 [; ;pic18f8622.h: 46: asm("SSP2CON2 equ 0F62h");
@@ -7309,12 +7299,6 @@ Version 3.2 HI-TECH Software Intermediate Code
 "245
 [e :UE 801 ]
 }
-"9 ../main.c
-[v _mensagem_lcd `uc ~T0 @X0 -> 17 `i e ]
-[; ;main.c: 9: char mensagem_lcd[17];
-"10
-[v _SPI_Recv `uc ~T0 @X0 -> 21 `i e ]
-[; ;main.c: 10: unsigned char SPI_Recv[21];
 "4 ../configBits.h
 [p x OSC=INTIO67 ]
 "5
@@ -7391,309 +7375,405 @@ Version 3.2 HI-TECH Software Intermediate Code
 [p x EBTR3=OFF ]
 "63
 [p x EBTRB=OFF ]
-"14 ../main.c
-[v _nBytes_SPI `uc ~T0 @X0 1 e ]
-[i _nBytes_SPI
--> -> 0 `i `uc
-]
-[; ;main.c: 14: unsigned char nBytes_SPI = 0;
-"15
-[v _SPI_Data `uc ~T0 @X0 -> 64 `i e ]
-[; ;main.c: 15: unsigned char SPI_Data[64];
-"16
+[; ;main.c: 10: typedef struct {
+[; ;main.c: 11: unsigned int x;
+[; ;main.c: 12: unsigned int y;
+[; ;main.c: 13: unsigned int color;
+[; ;main.c: 14: unsigned char intensity;
+[; ;main.c: 15: } led;
+"20 ../main.c
+[v F7261 `S805 ~T0 @X0 -> 64 `i t ]
+[v _ledList `F7261 ~T0 @X0 -> 4 `i e ]
+[; ;main.c: 20: led ledList[4][64];
+"23
+[v _mensagem_lcd `uc ~T0 @X0 -> 17 `i e ]
+[; ;main.c: 23: char mensagem_lcd[17];
+"25
 [v _transmissoes `ui ~T0 @X0 1 e ]
 [i _transmissoes
 -> -> 0 `i `ui
 ]
-[; ;main.c: 16: unsigned int transmissoes = 0;
-"17
+[; ;main.c: 25: unsigned int transmissoes = 0;
+"26
 [v _update_lcd `uc ~T0 @X0 1 e ]
 [i _update_lcd
 -> -> 1 `i `uc
 ]
-[; ;main.c: 17: unsigned char update_lcd = 1;
-"18
-[v _i `i ~T0 @X0 1 e ]
-[i _i
--> 0 `i
-]
-[; ;main.c: 18: int i=0;
-[; ;main.c: 22: void Inicia_Timer0();
-"24
-[p l 1 ]
-"25
-[v F7264 `(v ~T0 @X0 1 tf ]
-[v _receiveData `IF7264 ~T0 @X0 1 e ]
+[; ;main.c: 26: unsigned char update_lcd = 1;
+"28
+[v F7267 `(v ~T0 @X0 1 tf ]
+[v _receiveData `IF7267 ~T0 @X0 1 e ]
 {
-[; ;main.c: 25: void interrupt receiveData(void){
+[; ;main.c: 28: void interrupt receiveData(void){
 [e :U _receiveData ]
 [f ]
-[; ;main.c: 27: if(PIR1bits.SSP1IF)
-"27
-[e $ ! != -> . . _PIR1bits 0 3 `i -> -> -> 0 `i `Vuc `i 806  ]
-[; ;main.c: 28: {
-"28
-{
-[; ;main.c: 29: transmissoes ++;
-"29
-[e ++ _transmissoes -> -> 1 `i `ui ]
-[; ;main.c: 30: PORTBbits.RB1 = 1;
+[; ;main.c: 30: if(PIR1bits.SSP1IF)
 "30
-[e = . . _PORTBbits 0 1 -> -> 1 `i `uc ]
-[; ;main.c: 33: nBytes_SPI = SSP1BUF;
-"33
-[e = _nBytes_SPI _SSP1BUF ]
-[; ;main.c: 34: SSP1BUF = 0;
-"34
-[e = _SSP1BUF -> -> 0 `i `uc ]
-[; ;main.c: 37: while(i < nBytes_SPI)
-"37
-[e $U 807  ]
-[e :U 808 ]
-[; ;main.c: 38: {
-"38
+[e $ ! != -> . . _PIR1bits 0 3 `i -> -> -> 0 `i `Vuc `i 807  ]
+[; ;main.c: 31: {
+"31
 {
-[; ;main.c: 40: while(!SSP1STATbits.BF);
-"40
-[e $U 810  ]
-[e :U 811 ]
-[e :U 810 ]
-[e $ ! != -> . . _SSP1STATbits 2 0 `i -> -> -> 0 `i `Vuc `i 811  ]
-[e :U 812 ]
-[; ;main.c: 43: SPI_Data[i] = SSP1BUF;
-"43
-[e = *U + &U _SPI_Data * -> -> _i `ui `ux -> -> # *U &U _SPI_Data `ui `ux _SSP1BUF ]
-[; ;main.c: 44: SSP1BUF = 0;
-"44
+[; ;main.c: 32: transmissoes ++;
+"32
+[e ++ _transmissoes -> -> 1 `i `ui ]
+[; ;main.c: 33: PORTBbits.RB1 = 1;
+"33
+[e = . . _PORTBbits 0 1 -> -> 1 `i `uc ]
+"36
+[v _totalBytes `uc ~T0 @X0 1 a ]
+[; ;main.c: 36: unsigned char totalBytes = SSP1BUF;
+[e = _totalBytes _SSP1BUF ]
+[; ;main.c: 37: SSP1BUF = 0;
+"37
 [e = _SSP1BUF -> -> 0 `i `uc ]
-[; ;main.c: 46: i++;
-"46
-[e ++ _i -> 1 `i ]
+"40
+[v _ledData `uc ~T0 @X0 -> 2 `i a ]
+"43
+[v _i `i ~T0 @X0 1 a ]
+[; ;main.c: 40: unsigned char ledData[2];
+[; ;main.c: 43: int i = 0;
+[e = _i -> 0 `i ]
+[; ;main.c: 44: while(i < totalBytes)
+"44
+[e $U 808  ]
+[e :U 809 ]
+[; ;main.c: 45: {
+"45
+{
+[; ;main.c: 47: while(!SSP1STATbits.BF);
 "47
+[e $U 811  ]
+[e :U 812 ]
+[e :U 811 ]
+[e $ ! != -> . . _SSP1STATbits 2 0 `i -> -> -> 0 `i `Vuc `i 812  ]
+[e :U 813 ]
+[; ;main.c: 50: ledData[i] = SSP1BUF;
+"50
+[e = *U + &U _ledData * -> -> _i `ui `ux -> -> # *U &U _ledData `ui `ux _SSP1BUF ]
+[; ;main.c: 51: SSP1BUF = 0;
+"51
+[e = _SSP1BUF -> -> 0 `i `uc ]
+[; ;main.c: 53: i++;
+"53
+[e ++ _i -> 1 `i ]
+"54
+}
+[e :U 808 ]
+"44
+[e $ < _i -> _totalBytes `i 809  ]
+[e :U 810 ]
+[; ;main.c: 54: }
+[; ;main.c: 55: i=0;
+"55
+[e = _i -> 0 `i ]
+"58
+[v _board `i ~T0 @X0 1 a ]
+[; ;main.c: 58: int board = ledData[0] >> 6 & 0b11;
+[e = _board & >> -> *U + &U _ledData * -> -> -> 0 `i `ui `ux -> -> # *U &U _ledData `ui `ux `i -> 6 `i -> 3 `i ]
+"59
+[v _x `i ~T0 @X0 1 a ]
+[; ;main.c: 59: int x = ledData[0] >> 4 & 0b11;
+[e = _x & >> -> *U + &U _ledData * -> -> -> 0 `i `ui `ux -> -> # *U &U _ledData `ui `ux `i -> 4 `i -> 3 `i ]
+"60
+[v _y `i ~T0 @X0 1 a ]
+[; ;main.c: 60: int y = ledData[0] >> 2 & 0b11;
+[e = _y & >> -> *U + &U _ledData * -> -> -> 0 `i `ui `ux -> -> # *U &U _ledData `ui `ux `i -> 2 `i -> 3 `i ]
+"62
+[v _l `*S805 ~T0 @X0 1 a ]
+[; ;main.c: 62: led* l = &ledList[board][x*y];
+[e = _l &U *U + &U *U + &U _ledList * -> -> _board `ui `ux -> * -> # *U &U *U &U _ledList `ui -> -> 64 `i `ui `ux * -> -> * _x _y `ui `ux -> -> # *U &U *U + &U _ledList * -> -> _board `ui `ux -> * -> # *U &U *U &U _ledList `ui -> -> 64 `i `ui `ux `ui `ux ]
+[; ;main.c: 63: l->x = x;
+"63
+[e = . *U _l 0 -> _x `ui ]
+[; ;main.c: 64: l->y = y;
+"64
+[e = . *U _l 1 -> _y `ui ]
+[; ;main.c: 65: l->color = ledData[0] & 0b11;
+"65
+[e = . *U _l 2 -> & -> *U + &U _ledData * -> -> -> 0 `i `ui `ux -> -> # *U &U _ledData `ui `ux `i -> 3 `i `ui ]
+[; ;main.c: 66: l->intensity = ledData[1];
+"66
+[e = . *U _l 3 *U + &U _ledData * -> -> -> 1 `i `ui `ux -> -> # *U &U _ledData `ui `ux ]
+[; ;main.c: 68: update_lcd = 1;
+"68
+[e = _update_lcd -> -> 1 `i `uc ]
+[; ;main.c: 69: PORTBbits.RB1 = 0;
+"69
+[e = . . _PORTBbits 0 1 -> -> 0 `i `uc ]
+[; ;main.c: 70: PIR1bits.SSP1IF = 0;
+"70
+[e = . . _PIR1bits 0 3 -> -> 0 `i `uc ]
+"71
 }
 [e :U 807 ]
-"37
-[e $ < _i -> _nBytes_SPI `i 808  ]
-[e :U 809 ]
-[; ;main.c: 47: }
-[; ;main.c: 48: i=0;
-"48
-[e = _i -> 0 `i ]
-[; ;main.c: 50: update_lcd = 1;
-"50
-[e = _update_lcd -> -> 1 `i `uc ]
-[; ;main.c: 51: PORTBbits.RB1 = 0;
-"51
-[e = . . _PORTBbits 0 1 -> -> 0 `i `uc ]
-[; ;main.c: 52: PIR1bits.SSP1IF = 0;
-"52
-[e = . . _PIR1bits 0 3 -> -> 0 `i `uc ]
-"53
+[; ;main.c: 71: }
+[; ;main.c: 72: }
+"72
+[e :UE 806 ]
 }
-[e :U 806 ]
-[; ;main.c: 53: }
-[; ;main.c: 54: }
-"54
-[e :UE 805 ]
-}
-"57
+"75
 [v _main `(v ~T0 @X0 1 ef ]
 {
-[; ;main.c: 56: void main (void)
-[; ;main.c: 57: {
+[; ;main.c: 74: void main (void)
+[; ;main.c: 75: {
 [e :U _main ]
 [f ]
-[; ;main.c: 60: OSCCONbits.IRCF=0b111;
-"60
-[e = . . _OSCCONbits 0 3 -> -> 7 `i `uc ]
-[; ;main.c: 63: ADCON0bits.ADON = 0;
-"63
-[e = . . _ADCON0bits 1 0 -> -> 0 `i `uc ]
-[; ;main.c: 64: ADCON1bits.PCFG0 = 1;
-"64
-[e = . . _ADCON1bits 1 0 -> -> 1 `i `uc ]
-[; ;main.c: 65: ADCON1bits.PCFG1 = 1;
-"65
-[e = . . _ADCON1bits 1 1 -> -> 1 `i `uc ]
-[; ;main.c: 66: ADCON1bits.PCFG2 = 1;
-"66
-[e = . . _ADCON1bits 1 2 -> -> 1 `i `uc ]
-[; ;main.c: 67: ADCON1bits.PCFG3 = 1;
-"67
-[e = . . _ADCON1bits 1 3 -> -> 1 `i `uc ]
-[; ;main.c: 70: CMCONbits.CM0 = 1;
-"70
-[e = . . _CMCONbits 1 0 -> -> 1 `i `uc ]
-[; ;main.c: 71: CMCONbits.CM1 = 1;
-"71
-[e = . . _CMCONbits 1 1 -> -> 1 `i `uc ]
-[; ;main.c: 72: CMCONbits.CM2 = 1;
-"72
-[e = . . _CMCONbits 1 2 -> -> 1 `i `uc ]
-[; ;main.c: 77: TRISA=0b00000000;
-"77
-[e = _TRISA -> -> 0 `i `uc ]
-[; ;main.c: 78: TRISB=0b00000000;
+[; ;main.c: 78: OSCCONbits.IRCF=0b111;
 "78
-[e = _TRISB -> -> 0 `i `uc ]
-[; ;main.c: 79: TRISC=0b00011000;
-"79
-[e = _TRISC -> -> 24 `i `uc ]
-[; ;main.c: 80: TRISD=0b00000000;
-"80
-[e = _TRISD -> -> 0 `i `uc ]
-[; ;main.c: 81: TRISE=0b00000000;
+[e = . . _OSCCONbits 0 3 -> -> 7 `i `uc ]
+[; ;main.c: 81: ADCON0bits.ADON = 0;
 "81
-[e = _TRISE -> -> 0 `i `uc ]
-[; ;main.c: 82: TRISF=0b00000000;
+[e = . . _ADCON0bits 1 0 -> -> 0 `i `uc ]
+[; ;main.c: 82: ADCON1bits.PCFG0 = 1;
 "82
-[e = _TRISF -> -> 0 `i `uc ]
-[; ;main.c: 83: TRISG=0b00000000;
+[e = . . _ADCON1bits 1 0 -> -> 1 `i `uc ]
+[; ;main.c: 83: ADCON1bits.PCFG1 = 1;
 "83
-[e = _TRISG -> -> 0 `i `uc ]
-[; ;main.c: 84: TRISH=0b00000000;
+[e = . . _ADCON1bits 1 1 -> -> 1 `i `uc ]
+[; ;main.c: 84: ADCON1bits.PCFG2 = 1;
 "84
-[e = _TRISH -> -> 0 `i `uc ]
-[; ;main.c: 85: TRISJ=0b00000000;
+[e = . . _ADCON1bits 1 2 -> -> 1 `i `uc ]
+[; ;main.c: 85: ADCON1bits.PCFG3 = 1;
 "85
-[e = _TRISJ -> -> 0 `i `uc ]
-[; ;main.c: 88: PORTA=0x00;
+[e = . . _ADCON1bits 1 3 -> -> 1 `i `uc ]
+[; ;main.c: 88: CMCONbits.CM0 = 1;
 "88
-[e = _PORTA -> -> 0 `i `uc ]
-[; ;main.c: 89: PORTB=0x00;
+[e = . . _CMCONbits 1 0 -> -> 1 `i `uc ]
+[; ;main.c: 89: CMCONbits.CM1 = 1;
 "89
-[e = _PORTB -> -> 0 `i `uc ]
-[; ;main.c: 90: PORTC=0x00;
+[e = . . _CMCONbits 1 1 -> -> 1 `i `uc ]
+[; ;main.c: 90: CMCONbits.CM2 = 1;
 "90
-[e = _PORTC -> -> 0 `i `uc ]
-[; ;main.c: 91: PORTD=0x00;
-"91
-[e = _PORTD -> -> 0 `i `uc ]
-[; ;main.c: 92: PORTE=0x00;
-"92
-[e = _PORTE -> -> 0 `i `uc ]
-[; ;main.c: 93: PORTF=0x00;
-"93
-[e = _PORTF -> -> 0 `i `uc ]
-[; ;main.c: 94: PORTG=0x00;
-"94
-[e = _PORTG -> -> 0 `i `uc ]
-[; ;main.c: 95: PORTH=0x00;
+[e = . . _CMCONbits 1 2 -> -> 1 `i `uc ]
+[; ;main.c: 95: TRISA=0b00000000;
 "95
-[e = _PORTH -> -> 0 `i `uc ]
-[; ;main.c: 97: PORTJ=0xff;
+[e = _TRISA -> -> 0 `i `uc ]
+[; ;main.c: 96: TRISB=0b00000000;
+"96
+[e = _TRISB -> -> 0 `i `uc ]
+[; ;main.c: 97: TRISC=0b00011000;
 "97
-[e = _PORTJ -> -> 255 `i `uc ]
-[; ;main.c: 99: INTCONbits.GIEH=0;
+[e = _TRISC -> -> 24 `i `uc ]
+[; ;main.c: 98: TRISD=0b00000000;
+"98
+[e = _TRISD -> -> 0 `i `uc ]
+[; ;main.c: 99: TRISE=0b00000000;
 "99
-[e = . . _INTCONbits 2 7 -> -> 0 `i `uc ]
-[; ;main.c: 100: INTCONbits.GIEL=0;
+[e = _TRISE -> -> 0 `i `uc ]
+[; ;main.c: 100: TRISF=0b00000000;
 "100
-[e = . . _INTCONbits 2 6 -> -> 0 `i `uc ]
-[; ;main.c: 102: lcd_start();
+[e = _TRISF -> -> 0 `i `uc ]
+[; ;main.c: 101: TRISG=0b00000000;
+"101
+[e = _TRISG -> -> 0 `i `uc ]
+[; ;main.c: 102: TRISH=0b00000000;
 "102
-[e ( _lcd_start ..  ]
-[; ;main.c: 105: (SSP1CON1 &=0xDF);
-"105
-[e =& _SSP1CON1 -> -> 223 `i `uc ]
-[; ;main.c: 108: OpenSPI1(0b00000100,0b00000000,0b00000000);
+[e = _TRISH -> -> 0 `i `uc ]
+[; ;main.c: 103: TRISJ=0b00000000;
+"103
+[e = _TRISJ -> -> 0 `i `uc ]
+[; ;main.c: 106: PORTA=0x00;
+"106
+[e = _PORTA -> -> 0 `i `uc ]
+[; ;main.c: 107: PORTB=0x00;
+"107
+[e = _PORTB -> -> 0 `i `uc ]
+[; ;main.c: 108: PORTC=0x00;
 "108
-[e ( _OpenSPI1 (3 , , -> -> 4 `i `uc -> -> 0 `i `uc -> -> 0 `i `uc ]
-[; ;main.c: 111: IPR1bits.SSP1IP = 1;
+[e = _PORTC -> -> 0 `i `uc ]
+[; ;main.c: 109: PORTD=0x00;
+"109
+[e = _PORTD -> -> 0 `i `uc ]
+[; ;main.c: 110: PORTE=0x00;
+"110
+[e = _PORTE -> -> 0 `i `uc ]
+[; ;main.c: 111: PORTF=0x00;
 "111
-[e = . . _IPR1bits 0 3 -> -> 1 `i `uc ]
-[; ;main.c: 112: PIR1bits.SSP1IF = 0;
+[e = _PORTF -> -> 0 `i `uc ]
+[; ;main.c: 112: PORTG=0x00;
 "112
-[e = . . _PIR1bits 0 3 -> -> 0 `i `uc ]
-[; ;main.c: 113: PIE1bits.SSP1IE = 0;
+[e = _PORTG -> -> 0 `i `uc ]
+[; ;main.c: 113: PORTH=0x00;
 "113
-[e = . . _PIE1bits 0 3 -> -> 0 `i `uc ]
-[; ;main.c: 123: while (i<64){SPI_Data[i]=0;i++;}i=0;
+[e = _PORTH -> -> 0 `i `uc ]
+[; ;main.c: 115: PORTJ=0xff;
+"115
+[e = _PORTJ -> -> 255 `i `uc ]
+[; ;main.c: 117: INTCONbits.GIE=1;
+"117
+[e = . . _INTCONbits 1 7 -> -> 1 `i `uc ]
+[; ;main.c: 118: PEIE = 1;
+"118
+[e = _PEIE -> -> 1 `i `b ]
+[; ;main.c: 120: lcd_start();
+"120
+[e ( _lcd_start ..  ]
+[; ;main.c: 123: (SSP1CON1 &=0xDF);
 "123
-[e $U 814  ]
-[e :U 815 ]
-{
-[e = *U + &U _SPI_Data * -> -> _i `ui `ux -> -> # *U &U _SPI_Data `ui `ux -> -> 0 `i `uc ]
-[e ++ _i -> 1 `i ]
-}
-[e :U 814 ]
-[e $ < _i -> 64 `i 815  ]
-[e :U 816 ]
-[e = _i -> 0 `i ]
-[; ;main.c: 126: while(1)
+[e =& _SSP1CON1 -> -> 223 `i `uc ]
+[; ;main.c: 126: OpenSPI1(0b00000100,0b00000000,0b00000000);
 "126
-[e :U 818 ]
-[; ;main.c: 127: {
-"127
-{
-[; ;main.c: 131: if(update_lcd)
-"131
-[e $ ! != -> _update_lcd `i -> -> -> 0 `i `uc `i 820  ]
-[; ;main.c: 132: {
+[e ( _OpenSPI1 (3 , , -> -> 4 `i `uc -> -> 0 `i `uc -> -> 0 `i `uc ]
+[; ;main.c: 129: PIR1bits.SSP1IF = 0;
+"129
+[e = . . _PIR1bits 0 3 -> -> 0 `i `uc ]
+[; ;main.c: 130: PIE1bits.SSP1IE = 1;
+"130
+[e = . . _PIE1bits 0 3 -> -> 1 `i `uc ]
+[; ;main.c: 132: while(1)
 "132
-{
-[; ;main.c: 133: sprintf(mensagem_lcd, "nBytes=%d T=%d  ", nBytes_SPI, transmissoes);
+[e :U 816 ]
+[; ;main.c: 133: {
 "133
-[e ( _sprintf (1 , , (. , &U _mensagem_lcd :s 1C -> _nBytes_SPI `i _transmissoes ]
-[; ;main.c: 134: mostra_lcd_buff(1,1, mensagem_lcd,16);
-"134
-[e ( _mostra_lcd_buff (4 , , , -> -> 1 `i `uc -> -> 1 `i `uc &U _mensagem_lcd -> -> 16 `i `uc ]
-[; ;main.c: 136: sprintf(mensagem_lcd, "0x%X,%X,%X,%X,%X       ", SPI_Data[0], SPI_Data[1], SPI_Data[2], SPI_Data[3], SPI_Data[4]);
+{
+[; ;main.c: 135: if(update_lcd)
+"135
+[e $ ! != -> _update_lcd `i -> -> -> 0 `i `uc `i 818  ]
+[; ;main.c: 136: {
 "136
-[e ( _sprintf (1 , , , , , (. , &U _mensagem_lcd :s 2C -> *U + &U _SPI_Data * -> -> -> 0 `i `ui `ux -> -> # *U &U _SPI_Data `ui `ux `i -> *U + &U _SPI_Data * -> -> -> 1 `i `ui `ux -> -> # *U &U _SPI_Data `ui `ux `i -> *U + &U _SPI_Data * -> -> -> 2 `i `ui `ux -> -> # *U &U _SPI_Data `ui `ux `i -> *U + &U _SPI_Data * -> -> -> 3 `i `ui `ux -> -> # *U &U _SPI_Data `ui `ux `i -> *U + &U _SPI_Data * -> -> -> 4 `i `ui `ux -> -> # *U &U _SPI_Data `ui `ux `i ]
-[; ;main.c: 137: mostra_lcd_buff(2,1, mensagem_lcd,16);
+{
+[; ;main.c: 137: sprintf(mensagem_lcd, "T=%d  ", transmissoes);
 "137
-[e ( _mostra_lcd_buff (4 , , , -> -> 2 `i `uc -> -> 1 `i `uc &U _mensagem_lcd -> -> 16 `i `uc ]
-[; ;main.c: 139: update_lcd=0;
-"139
+[e ( _sprintf (1 , (. , &U _mensagem_lcd :s 1C _transmissoes ]
+[; ;main.c: 138: mostra_lcd_buff(1,1, mensagem_lcd,16);
+"138
+[e ( _mostra_lcd_buff (4 , , , -> -> 1 `i `uc -> -> 1 `i `uc &U _mensagem_lcd -> -> 16 `i `uc ]
+[; ;main.c: 143: update_lcd=0;
+"143
 [e = _update_lcd -> -> 0 `i `uc ]
-"140
-}
-[e :U 820 ]
 "144
 }
-[e :U 817 ]
-"126
-[e $U 818  ]
-[e :U 819 ]
-[; ;main.c: 140: }
+[e :U 818 ]
+"175
+[v F7278 `uc ~T0 @X0 -> 4 `i t ]
+[v F7279 `F7278 ~T0 @X0 -> 4 `i s ]
+[i F7279
+:U ..
+:U ..
+"176
+-> -> 0 `i `uc
+-> -> 32 `i `uc
+-> -> 8 `i `uc
+-> -> 40 `i `uc
+..
+:U ..
+"177
+-> -> 2 `i `uc
+-> -> 34 `i `uc
+-> -> 10 `i `uc
+-> -> 42 `i `uc
+..
+:U ..
+"178
+-> -> 16 `i `uc
+-> -> 48 `i `uc
+-> -> 24 `i `uc
+-> -> 56 `i `uc
+..
+:U ..
+"179
+-> -> 18 `i `uc
+-> -> 50 `i `uc
+-> -> 26 `i `uc
+-> -> 58 `i `uc
+..
+..
+]
+"180
+[v _pixel `F7278 ~T0 @X0 -> 4 `i a ]
 [; ;main.c: 144: }
-[; ;main.c: 147: }
-"147
-[e :UE 813 ]
-}
-"152
-[v _Inicia_Timer0 `(v ~T0 @X0 1 ef ]
+[; ;main.c: 175: unsigned char pixel[4][4] = {
+[; ;main.c: 176: {0, 32, 8, 40},
+[; ;main.c: 177: {2, 34, 10, 42},
+[; ;main.c: 178: {16, 48, 24, 56},
+[; ;main.c: 179: {18, 50, 26, 58}
+[; ;main.c: 180: };
+[e = _pixel F7279 ]
+"182
+[v F7281 `uc ~T0 @X0 -> 4 `i s ]
+[i F7281
+:U ..
+-> -> 0 `i `uc
+-> -> 1 `i `uc
+-> -> 4 `i `uc
+-> -> 5 `i `uc
+..
+]
+[v _colors_offset `uc ~T0 @X0 -> 4 `i a ]
+[; ;main.c: 182: unsigned char colors_offset[4] = {0, 1, 4, 5};
+[e = _colors_offset F7281 ]
+[; ;main.c: 184: for (unsigned int color = 0; color < 4; ++color)
+"184
 {
-[; ;main.c: 151: void Inicia_Timer0(void)
-[; ;main.c: 152: {
-[e :U _Inicia_Timer0 ]
-[f ]
-[; ;main.c: 153: T0CONbits.TMR0ON=0;
-"153
-[e = . . _T0CONbits 0 5 -> -> 0 `i `uc ]
-[; ;main.c: 154: T0CONbits.T08BIT=0;
-"154
-[e = . . _T0CONbits 0 4 -> -> 0 `i `uc ]
-[; ;main.c: 155: T0CONbits.T0CS=0;
-"155
-[e = . . _T0CONbits 0 3 -> -> 0 `i `uc ]
-[; ;main.c: 156: T0CONbits.T0SE=0;
-"156
-[e = . . _T0CONbits 0 2 -> -> 0 `i `uc ]
-[; ;main.c: 157: T0CONbits.PSA=0;
-"157
-[e = . . _T0CONbits 0 1 -> -> 0 `i `uc ]
-[; ;main.c: 158: T0CONbits.T0PS=0b011;
-"158
-[e = . . _T0CONbits 0 0 -> -> 3 `i `uc ]
-[; ;main.c: 159: T0CONbits.TMR0ON=1;
-"159
-[e = . . _T0CONbits 0 5 -> -> 1 `i `uc ]
-[; ;main.c: 160: }
-"160
-[e :UE 821 ]
+[v _color `ui ~T0 @X0 1 a ]
+[e = _color -> -> 0 `i `ui ]
+[e $ < _color -> -> 4 `i `ui 819  ]
+[e $U 820  ]
+"185
+[e :U 819 ]
+[; ;main.c: 185: for (unsigned int x = 0; x < 4; ++x)
+{
+[v _x `ui ~T0 @X0 1 a ]
+[e = _x -> -> 0 `i `ui ]
+[e $ < _x -> -> 4 `i `ui 822  ]
+[e $U 823  ]
+"186
+[e :U 822 ]
+[; ;main.c: 186: for (unsigned int y = 0; y < 4; ++y)
+{
+[v _y `ui ~T0 @X0 1 a ]
+[e = _y -> -> 0 `i `ui ]
+[e $ < _y -> -> 4 `i `ui 825  ]
+[e $U 826  ]
+"187
+[e :U 825 ]
+[; ;main.c: 187: {
+{
+"188
+[v _i `ui ~T0 @X0 1 a ]
+[; ;main.c: 188: unsigned int i = pixel[y][x] + colors_offset[color];
+[e = _i -> + -> *U + &U *U + &U _pixel * -> _y `ux -> * -> # *U &U *U &U _pixel `ui -> -> 4 `i `ui `ux * -> _x `ux -> -> # *U &U *U + &U _pixel * -> _y `ux -> * -> # *U &U *U &U _pixel `ui -> -> 4 `i `ui `ux `ui `ux `i -> *U + &U _colors_offset * -> _color `ux -> -> # *U &U _colors_offset `ui `ux `i `ui ]
+[; ;main.c: 190: PORTH = ~(0x01 << (i % 8));
+"190
+[e = _PORTH -> ~ << -> 1 `i % _i -> -> 8 `i `ui `uc ]
+[; ;main.c: 191: PORTJ = 0x01 << (i / 8);
+"191
+[e = _PORTJ -> << -> 1 `i / _i -> -> 8 `i `ui `uc ]
+[; ;main.c: 192: Delay10KTCYx(20);
+"192
+[e ( _Delay10KTCYx (1 -> -> 20 `i `uc ]
+"193
 }
-[p f _sprintf 10485888 ]
-[a 1C 110 66 121 116 101 115 61 37 100 32 84 61 37 100 32 32 0 ]
-[a 2C 48 120 37 88 44 37 88 44 37 88 44 37 88 44 37 88 32 32 32 32 32 32 32 0 ]
+"186
+[e =+ _y -> -> 1 `i `ui ]
+[e $ < _y -> -> 4 `i `ui 825  ]
+[e :U 826 ]
+"193
+}
+"185
+[e =+ _x -> -> 1 `i `ui ]
+[e $ < _x -> -> 4 `i `ui 822  ]
+[e :U 823 ]
+"193
+}
+"184
+[e =+ _color -> -> 1 `i `ui ]
+[e $ < _color -> -> 4 `i `ui 819  ]
+[e :U 820 ]
+"193
+}
+"209
+}
+[e :U 815 ]
+"132
+[e $U 816  ]
+[e :U 817 ]
+[; ;main.c: 193: }
+[; ;main.c: 209: }
+[; ;main.c: 210: }
+"210
+[e :UE 814 ]
+}
+[p f _sprintf 8388736 ]
+[a 1C 84 61 37 100 32 32 0 ]
+

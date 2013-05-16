@@ -181,9 +181,9 @@ void main (void)
 
 		unsigned char colors_offset[4] = {0, 1, 4, 5};
 
-		for (unsigned int color = 0; color < 4; ++color)
-		for (unsigned int y = 0; y < 4; ++y)	
+                for (unsigned int color = 0; color < 4; ++color)
 		for (unsigned int x = 0; x < 4; ++x)
+		for (unsigned int y = 0; y < 4; ++y)
 		{
 			unsigned int i = pixel[y][x] + colors_offset[color];
 

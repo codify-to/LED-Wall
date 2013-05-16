@@ -281,12 +281,6 @@ const static unsigned int dpowers[] = {1, 10, 100, 1000, 10000,
 # 359
 };
 
-
-const static unsigned int hexpowers[] = {1, 0x10, 0x100, 0x1000,
-
-# 366
-};
-
 # 455
 int
 
@@ -341,17 +335,6 @@ case 'd':
 case 'i':
 break;
 
-# 721
-case 'X':
-
-# 727
-case 'x':
-
-
-flag |= 0x80;
-
-break;
-
 # 811
 default:
 
@@ -361,9 +344,7 @@ continue;
 # 831
 }
 
-# 1258
-if((flag & 0x80) == 0x00)
-
+# 1260
 {
 
 # 1266
@@ -376,45 +357,10 @@ _val._val = -_val._val;
 
 }
 
-else
-
-
-
-
-{
-
-# 1293
-_val._val = (*(unsigned *)__va_arg((*(unsigned **)ap), (unsigned)0));
-}
-
-# 1301
-switch((unsigned char)(flag & 0x80)) {
-
-
-
-
-case 0x00:
-
 # 1312
 for(c = 1 ; c != sizeof dpowers/sizeof dpowers[0] ; c++)
 if(_val._val < dpowers[c])
 break;
-
-break;
-
-
-
-
-case 0x80:
-
-for(c = 1 ; c != sizeof hexpowers/sizeof hexpowers[0] ; c++)
-if(_val._val < hexpowers[c])
-break;
-
-break;
-
-# 1343
-}
 
 # 1429
 {
@@ -431,34 +377,11 @@ prec = c;
 
 while(prec--) {
 
-switch((unsigned char)(flag & 0x80))
-
+# 1485
 {
-
-
-
-
-case 0x00:
 
 # 1496
 c = (_val._val / dpowers[prec]) % 10 + '0';
-
-break;
-
-# 1504
-case 0x80:
-
-{
-unsigned char idx = (_val._val / hexpowers[prec]) & 0xF;
-
-
-
-c = "0123456789ABCDEF"[idx];
-
-# 1515
-}
-
-break;
 
 # 1530
 }

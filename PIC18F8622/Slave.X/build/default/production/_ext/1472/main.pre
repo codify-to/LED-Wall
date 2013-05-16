@@ -8577,10 +8577,6 @@ limpa_tela ( );
 ctrl_lcd_cursor (0);
 }
 
-# 9 "../main.c"
-char mensagem_lcd[17];
-unsigned char SPI_Recv[21];
-
 
 # 4 "../configBits.h"
 #pragma config OSC = INTIO67
@@ -8644,18 +8640,23 @@ unsigned char SPI_Recv[21];
 
 #pragma config EBTRB = OFF
 
-# 14 "../main.c"
-unsigned char nBytes_SPI = 0;
-unsigned char SPI_Data[64];
+# 10 "../main.c"
+typedef struct {
+unsigned int x;
+unsigned int y;
+unsigned int color;
+unsigned char intensity;
+} led;
+
+# 20
+led ledList[4][64];
+
+
+char mensagem_lcd[17];
+
 unsigned int transmissoes = 0;
 unsigned char update_lcd = 1;
-int i=0;
 
-
-
-void Inicia_Timer0();
-
-#pragma interrupt_level 1;
 void interrupt receiveData(void){
 
 if(PIR1bits.SSP1IF)
@@ -8664,22 +8665,37 @@ transmissoes ++;
 PORTBbits.RB1 = 1;
 
 
-nBytes_SPI = SSP1BUF;
+unsigned char totalBytes = SSP1BUF;
 SSP1BUF = 0;
 
 
-while(i < nBytes_SPI)
+unsigned char ledData[2];
+
+
+int i = 0;
+while(i < totalBytes)
 {
 
 while(!SSP1STATbits.BF);
 
 
-SPI_Data[i] = SSP1BUF;
+ledData[i] = SSP1BUF;
 SSP1BUF = 0;
 
 i++;
 }
 i=0;
+
+
+int board = ledData[0] >> 6 & 0b11;
+int x = ledData[0] >> 4 & 0b11;
+int y = ledData[0] >> 2 & 0b11;
+
+led* l = &ledList[board][x*y];
+l->x = x;
+l->y = y;
+l->color = ledData[0] & 0b11;
+l->intensity = ledData[1];
 
 update_lcd = 1;
 PORTBbits.RB1 = 0;
@@ -8730,8 +8746,8 @@ PORTH=0x00;
 
 PORTJ=0xff;
 
-INTCONbits.GIEH=0;
-INTCONbits.GIEL=0;
+INTCONbits.GIE=1;
+PEIE = 1;
 
 lcd_start();
 
@@ -8742,47 +8758,44 @@ lcd_start();
 OpenSPI1(0b00000100,0b00000000,0b00000000);
 
 
-IPR1bits.SSP1IP = 1;
 PIR1bits.SSP1IF = 0;
-PIE1bits.SSP1IE = 0;
-
-# 123
-while (i<64){SPI_Data[i]=0;i++;}i=0;
-
+PIE1bits.SSP1IE = 1;
 
 while(1)
 {
 
-
-
 if(update_lcd)
 {
-sprintf(mensagem_lcd, "nBytes=%d T=%d  ", nBytes_SPI, transmissoes);
+sprintf(mensagem_lcd, "T=%d  ", transmissoes);
 mostra_lcd_buff(1,1, mensagem_lcd,16);
 
-sprintf(mensagem_lcd, "0x%X,%X,%X,%X,%X       ", SPI_Data[0], SPI_Data[1], SPI_Data[2], SPI_Data[3], SPI_Data[4]);
-mostra_lcd_buff(2,1, mensagem_lcd,16);
+
+
 
 update_lcd=0;
 }
 
+# 175
+unsigned char pixel[4][4] = {
+{0, 32, 8, 40},
+{2, 34, 10, 42},
+{16, 48, 24, 56},
+{18, 50, 26, 58}
+};
 
+unsigned char colors_offset[4] = {0, 1, 4, 5};
 
-}
-
-
-}
-
-
-
-void Inicia_Timer0(void)
+for (unsigned int color = 0; color < 4; ++color)
+for (unsigned int x = 0; x < 4; ++x)
+for (unsigned int y = 0; y < 4; ++y)
 {
-T0CONbits.TMR0ON=0;
-T0CONbits.T08BIT=0;
-T0CONbits.T0CS=0;
-T0CONbits.T0SE=0;
-T0CONbits.PSA=0;
-T0CONbits.T0PS=0b011;
-T0CONbits.TMR0ON=1;
+unsigned int i = pixel[y][x] + colors_offset[color];
+
+PORTH = ~(0x01 << (i % 8));
+PORTJ = 0x01 << (i / 8);
+Delay10KTCYx(20);
 }
 
+# 209
+}
+}
