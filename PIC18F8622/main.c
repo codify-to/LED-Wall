@@ -14,7 +14,9 @@ LED Structure and control
 	4 boards, 
 	64 leds. 
 */
-unsigned int ledList[4*64];
+#define BOARDS 4
+#define LEDS_PER_BOARD 64
+unsigned int ledList[BOARDS*LEDS_PER_BOARD];
 unsigned char colors_offset[4] = {0, 1, 4, 5};
 unsigned char pixel[4][4] = {
 	{0,  32,  8, 40},
@@ -33,7 +35,6 @@ void startTimer0();
 Debug vars
 *********/
 char mensagem_lcd[17];		//Buffer para formatar os dados a mostrar no LCD
-// unsigned char SPI_Data[64];
 unsigned int transmissoes = 0;
 unsigned char update_lcd = 1;
 
@@ -62,22 +63,35 @@ void interrupt receiveData(void){
 	// 
 	if (INTCONbits.TMR0IF)
 	{
+		// Cleanup
+		// LATA=0x00;
+		// LATB=0x00;
+		// LATC=0x00;
+		// LATD=0x00;
+		// LATE=0x00;
+		// LATF=0x00;
+		// LATG=0x00;
+		// LATH=0x00;
+		// LATJ=0x00;
+
 		for (board = 0; board < 4; ++board)
-			for (_color = 0; _color < 4; ++_color)
-			for (_x = 0; _x < 4; ++_x)
-			for (_y = 0; _y < 4; ++_y)
-			{
-				_p = pixel[_y][_x] + colors_offset[_color];
+		for (_color = 0; _color < 4; ++_color)
+		for (_x = 0; _x < 4; ++_x)
+		for (_y = 0; _y < 4; ++_y)
+		{
+			_p = pixel[_y][_x] + colors_offset[_color];
 
-				LATH = ~(0x01 << (_p % 8)); //GROUND
-				LATJ = 0x01 << (_p / 8); //1 << j; // VCC
+			// LATH = ~(0x01 << (_p % 8)); //GROUND
+			// LATJ = 0x01 << (_p / 8); //1 << j; // VCC
 
-				intensity = ledList[
-					(_x << 4) +
-					(_y << 2) +
-					(_color)
-				];
+			intensity = ledList[
+				(board << 6) +
+				(_x << 4) +
+				(_y << 2) +
+				(_color)
+			];
 
+			if(intensity > 0) {
 				if (board == 0)
 				{
 					/****
@@ -128,9 +142,12 @@ void interrupt receiveData(void){
 					// VCC
 					LATJ = 0x01 << (_p / 8);
 				}
-				
-				// Delay10KTCYx(20);
 			}
+
+			
+			
+			// Delay10KTCYx(20);
+		}
 
 		LATAbits.LATA0 = ~LATAbits.LATA0;
 
@@ -192,9 +209,11 @@ void main (void)
 
 	// Cleanup default memory values
 	// so, they will start off
-	for (int i = 0; i < 4*64; ++i){
+	for (int i = 0; i < BOARDS*LEDS_PER_BOARD; ++i){
 		ledList[i] = 0;
 	}
+
+	//ledList[0b11111110] = 255;
 	
 	//Desliga SPI
 	CloseSPI();
@@ -220,44 +239,40 @@ void main (void)
 		}
 
 		if(PIR1bits.SSP1IF){
-			PIR1bits.SSP1IF = 0;
+			// PORTBbits.RB1 = 1;
 
-			PORTBbits.RB1 = 1;
+			// //Check how many bytes we'll receive
+			// totalBytes = SSP1BUF;
+			// SSP1BUF = 0;
 
-			//Check how many bytes we'll receive
-			totalBytes = SSP1BUF;
-			SSP1BUF = 0;
+			// //Wait untill all bytes were received
+			// recBytes = 0;
+			// while(recBytes < totalBytes)
+			// {
+			// 	//Esperamos a chegada do próximo byte
+			// 	while(!SSP1STATbits.BF);
 
-			//Wait untill all bytes were received
-			recBytes = 0;
-			while(recBytes < totalBytes)
-			{
-				//Esperamos a chegada do próximo byte
-				while(!SSP1STATbits.BF);
+			// 	//Fazemos a leitura para dentro do buffer
+			// 	ledData[recBytes] = SSP1BUF;
+			// 	SSP1BUF = 0;
 
-				//Fazemos a leitura para dentro do buffer
-				ledData[recBytes] = SSP1BUF;
-				SSP1BUF = 0;
+			// 	recBytes++;
+			// }
+			// recBytes=0;
 
-				recBytes++;
-			}
-			recBytes=0;
+			// // Safe check.
+			// // We don't want to crash if we receive unexpected data, right?
+			// if(ledData[0] >= BOARDS*LEDS_PER_BOARD)
+			// 	continue;
 
-			ledList[ledData[0]] = ledData[1];
+			// ledList[ledData[0]] = ledData[1];
 			
-			transmissoes++;
-			update_lcd=1;
+			// transmissoes++;
+			// update_lcd=1;
 
-			PORTBbits.RB1 = 0;
+			// PORTBbits.RB1 = 0;
+			PIR1bits.SSP1IF = 0;
 		}
-		
-		// for (int board = 0; board < 4; ++board)
-		// for (int i = 0; i < 64; ++i)
-		// {
-		// 	led *l = &ledList[board][i];
-		// 	lightUp(l, board);
-		// 	// Delay10KTCYx(20);
-		// }
 
 	}
 }
