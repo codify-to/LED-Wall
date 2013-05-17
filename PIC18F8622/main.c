@@ -18,6 +18,14 @@ typedef struct {
 	64 leds. 
 */
 led ledList[4][64];
+unsigned char colors_offset[4] = {0, 1, 4, 5};
+unsigned char pixel[4][4] = {
+	{0,  32,  8, 40},
+	{2,  34, 10, 42},
+	{16, 48, 24, 56},
+	{18, 50, 26, 58}
+};
+void lightUp(led *l, int board);
 
 
 char mensagem_lcd[17];		//Buffer para formatar os dados a mostrar no LCD
@@ -25,45 +33,52 @@ char mensagem_lcd[17];		//Buffer para formatar os dados a mostrar no LCD
 unsigned int transmissoes = 0;
 unsigned char update_lcd = 1;
 
+/***************
+Interrupt vars
+***************/
+// only 2 bytes per led
+unsigned char ledData[2];
+unsigned char totalBytes;
+int recBytes=0;
+led *lcdLed;
+
 void interrupt receiveData(void){
 
 	if(PIR1bits.SSP1IF)
 	{
-			transmissoes ++;
-			PORTBbits.RB1 = 1;
+		transmissoes ++;
+		PORTBbits.RB1 = 1;
 
-			//Check how many bytes we'll receive
-			unsigned char totalBytes = SSP1BUF;
+		//Check how many bytes we'll receive
+		totalBytes = SSP1BUF;
+		SSP1BUF = 0;
+
+		//Wait untill all bytes were received
+		recBytes = 0;
+		while(recBytes < totalBytes)
+		{
+			//Esperamos a chegada do próximo byte
+			while(!SSP1STATbits.BF);
+
+			//Fazemos a leitura para dentro do buffer
+			ledData[recBytes] = SSP1BUF;
 			SSP1BUF = 0;
 
-			// only 2 bytes per led
-			unsigned char ledData[2];
+			recBytes++;
+		}
+		recBytes=0;
 
-			//Wait untill all bytes were received
-			int i = 0;
-			while(i < totalBytes)
-			{
-				//Esperamos a chegada do próximo byte
-				while(!SSP1STATbits.BF);
+		// unsigned int color = ledData[1] & 0b11;
+		unsigned int board = ledData[0] >> 6 & 0b11;
+		unsigned int x = ledData[0] >> 4 & 0b11;
+		unsigned int y = ledData[0] >> 2 & 0b11;
+		led* l = &ledList[board][x + y*4];
+		l->x = x;
+		l->y = y;
+		l->color = ledData[0] & 0b11;
+		l->intensity = ledData[1];
 
-				//Fazemos a leitura para dentro do buffer
-				ledData[i] = SSP1BUF;
-				SSP1BUF = 0;
-
-				i++;
-			}
-			i=0;
-
-			// int color = ledData[1] & 0b11;
-			int board = ledData[0] >> 6 & 0b11;
-			int x = ledData[0] >> 4 & 0b11;
-			int y = ledData[0] >> 2 & 0b11;
-			// ledIntensity[board][x*y] = {.x= x, .y= y, .color= color, .intensity= ledData[1]};
-			led* l = &ledList[board][x*y];
-			l->x = x;
-			l->y = y;
-			l->color = ledData[0] & 0b11;
-			l->intensity = ledData[1];
+		lcdLed = l;
 
 		update_lcd = 1;
 		PORTBbits.RB1 = 0;
@@ -119,6 +134,16 @@ void main (void)
 
 	lcd_start();	// Inicia o LCD
 
+	// Cleanup default memory values
+	// so, they will start off
+	for (int board = 0; board < 4; ++board)
+	for (int i = 0; i < 64; ++i)
+	{
+		led *l = &ledList[board][i];
+		l->intensity = 0;
+	}
+	lcdLed = &ledList[0];
+
 	//Desliga SPI
 	CloseSPI();
 
@@ -134,77 +159,86 @@ void main (void)
 
 		if(update_lcd)
 		{
-			sprintf(mensagem_lcd, "T=%d  ", transmissoes);  //Formata mensagem no buffer de dados
+			sprintf(mensagem_lcd, "T=%d x:%d y:%d c:%d ", transmissoes, lcdLed->x, lcdLed->y, lcdLed->color);  //Formata mensagem no buffer de dados
 			mostra_lcd_buff(1,1, mensagem_lcd,16);
-
-			// sprintf(mensagem_lcd, "0x%X,%X,%X,%X,%X       ", SPI_Data[0], SPI_Data[1], SPI_Data[2], SPI_Data[3], SPI_Data[4]);  //Formata mensagem no buffer de dados
-			// mostra_lcd_buff(2,1, mensagem_lcd,16);
 
 			update_lcd=0;
 		}
 
-		// Update LED lighting
-		// for (int b = 0; b < 4; ++b)
-		// 	for (unsigned int l = 0; l < 64; ++l)
-		// 	{
-		// 		led currLed = ledList[b][l];
+		// for (int board = 0; board < 4; ++board)
+		// for (int i = 0; i < 64; ++i)
+		// {
+		// 	led *l = &ledList[board][i];
+		// 	lightUp(l, board);
+		// 	Delay10KTCYx(20);
+		// }
 
-		// 		//PORTH = 0x00; //GND
-		// 		//PORTJ = 0xff; //VCC
-		// 		sprintf(mensagem_lcd, "T=%d  ", l);  //Formata mensagem no buffer de dados
-		// 		mostra_lcd_buff(1,1, mensagem_lcd,16);
-
-		// 		PORTH = l >> 8;
-		// 		PORTJ = l & 0xff;
-		// 		Delay10KTCYx(100);
-		// 	}
-		// for (unsigned int color = 0; color < 4; ++color)
-		// for (unsigned int y = 0; y < 4; ++y)	
-		// for (unsigned int x = 0; x < 4; ++x)
-
-		// vermelho, verde, azul, branco
-		// primeiro coluna par
-		// depois coluna impar
-		// 2 em 2 linhas
-
-		// 0, 32,  8, 40
-		// 2, 34,  10, 42
-		// 16  38 24 56
-		// 18, 40, 26, 58
-
-		unsigned char pixel[4][4] = {
-			{0,  32,  8, 40},
-			{2,  34, 10, 42},
-			{16, 48, 24, 56},
-			{18, 50, 26, 58}
-		};
-
-		unsigned char colors_offset[4] = {0, 1, 4, 5};
-
-                for (unsigned int color = 0; color < 4; ++color)
+		for (unsigned int color = 0; color < 4; ++color)
 		for (unsigned int x = 0; x < 4; ++x)
 		for (unsigned int y = 0; y < 4; ++y)
 		{
-			unsigned int i = pixel[y][x] + colors_offset[color];
+			unsigned int p = pixel[y][x] + colors_offset[color];
 
-			PORTH = ~(0x01 << (i % 8)); //GROUND
-			PORTJ = 0x01 << (i / 8); //1 << j; // VCC
+			PORTH = ~(0x01 << (p % 8)); //GROUND
+			PORTJ = 0x01 << (p / 8); //1 << j; // VCC
 			Delay10KTCYx(20);
 		}
 
-		// for (unsigned int i = 2; i < 64; i+=8)
-		// {
-		// 	//PORTH = 0x00; //GND - color
-		// 	//PORTJ = 0xff; //VCC - pixel
+	}
+}
 
-  //                           sprintf(mensagem_lcd, "T=%d         ", i);  //Formata mensagem no buffer de dados
-  //                           mostra_lcd_buff(1,1, mensagem_lcd,16);
+void lightUp(led *l, int board){
+	
+	unsigned int i = pixel[l->y][l->x] + colors_offset[l->color];
+	unsigned int val;
+	if (board == 0)
+	{
+		/****
+		 This board has special cases
+		 *****/
 
-		// 	PORTH = ~(0x01 << (i % 8)); //GROUND
-		// 	PORTJ = 0x01 << (i / 8); //1 << j; // VCC
-		// 	Delay10KTCYx(255);
-  //                       Delay10KTCYx(255);
+		// GND
+		PORTA = ~(0x01 << (i % 8));
+		// VCC
+		val = 0x01 << (i / 8);
+		if(val == 5){
+			PORTC = 6;
+		} else {
+			PORTB = val; //1 << j; // VCC
+		}
+	} else if (board == 1)
+	{
+		// GND
+		PORTD = ~(0x01 << (i % 8));
+		// VCC
+		PORTE = 0x01 << (i / 8);
+	} else if (board == 2)
+	{
+		/****
+		 This board has special cases
+		 *****/
 
-		// }
+		// GND
+		val = ~(0x01 << (i % 8));
+		if(val == 7)
+			PORTC = 7;
+		else {
+			PORTF = val;
+		}
+		// VCC
+		val = 0x01 << (i / 8);
+		if (val < 5)
+		{
+			PORTG = val;
+		} else {
+			PORTC = val - 5;
+		}
+		PORTJ = val; // VCC
+	} else if (board == 3)
+	{
+		// GND
+		PORTH = ~(0x01 << (i % 8));
+		// VCC
+		PORTJ = 0x01 << (i / 8);
 	}
 }
