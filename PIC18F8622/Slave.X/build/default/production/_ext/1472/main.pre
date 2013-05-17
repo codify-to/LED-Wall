@@ -8650,12 +8650,26 @@ unsigned char intensity;
 
 # 20
 led ledList[4][64];
+unsigned char colors_offset[4] = {0, 1, 4, 5};
+unsigned char pixel[4][4] = {
+{0, 32, 8, 40},
+{2, 34, 10, 42},
+{16, 48, 24, 56},
+{18, 50, 26, 58}
+};
+void lightUp(led *l, int board);
 
 
 char mensagem_lcd[17];
 
 unsigned int transmissoes = 0;
 unsigned char update_lcd = 1;
+
+# 40
+unsigned char ledData[2];
+unsigned char totalBytes;
+int recBytes=0;
+led *lcdLed;
 
 void interrupt receiveData(void){
 
@@ -8665,37 +8679,35 @@ transmissoes ++;
 PORTBbits.RB1 = 1;
 
 
-unsigned char totalBytes = SSP1BUF;
+totalBytes = SSP1BUF;
 SSP1BUF = 0;
 
 
-unsigned char ledData[2];
-
-
-int i = 0;
-while(i < totalBytes)
+recBytes = 0;
+while(recBytes < totalBytes)
 {
 
 while(!SSP1STATbits.BF);
 
 
-ledData[i] = SSP1BUF;
+ledData[recBytes] = SSP1BUF;
 SSP1BUF = 0;
 
-i++;
+recBytes++;
 }
-i=0;
+recBytes=0;
 
 
-int board = ledData[0] >> 6 & 0b11;
-int x = ledData[0] >> 4 & 0b11;
-int y = ledData[0] >> 2 & 0b11;
-
-led* l = &ledList[board][x*y];
+unsigned int board = ledData[0] >> 6 & 0b11;
+unsigned int x = ledData[0] >> 4 & 0b11;
+unsigned int y = ledData[0] >> 2 & 0b11;
+led* l = &ledList[board][x + y*4];
 l->x = x;
 l->y = y;
 l->color = ledData[0] & 0b11;
 l->intensity = ledData[1];
+
+lcdLed = l;
 
 update_lcd = 1;
 PORTBbits.RB1 = 0;
@@ -8752,6 +8764,18 @@ PEIE = 1;
 lcd_start();
 
 
+
+for (int board = 0; board < 4; ++board)
+for (int i = 0; i < 64; ++i)
+{
+led *l = &ledList[board][i];
+l->intensity = 0;
+l->x = i % 4;
+l->y = i / 4;
+}
+lcdLed = &ledList[0];
+
+
 (SSP1CON1 &=0xDF);
 
 
@@ -8766,36 +8790,73 @@ while(1)
 
 if(update_lcd)
 {
-sprintf(mensagem_lcd, "T=%d  ", transmissoes);
+sprintf(mensagem_lcd, "T=%d x:%d y:%d c:%d ", transmissoes, lcdLed->x, lcdLed->y, lcdLed->color);
 mostra_lcd_buff(1,1, mensagem_lcd,16);
-
-
-
 
 update_lcd=0;
 }
 
-# 175
-unsigned char pixel[4][4] = {
-{0, 32, 8, 40},
-{2, 34, 10, 42},
-{16, 48, 24, 56},
-{18, 50, 26, 58}
-};
-
-unsigned char colors_offset[4] = {0, 1, 4, 5};
-
+# 178
 for (unsigned int color = 0; color < 4; ++color)
 for (unsigned int x = 0; x < 4; ++x)
 for (unsigned int y = 0; y < 4; ++y)
 {
-unsigned int i = pixel[y][x] + colors_offset[color];
+unsigned int p = pixel[y][x] + colors_offset[color];
 
-PORTH = ~(0x01 << (i % 8));
-PORTJ = 0x01 << (i / 8);
-Delay10KTCYx(20);
+PORTH = ~(0x01 << (p % 8));
+PORTJ = 0x01 << (p / 8);
+
 }
 
-# 209
+}
+}
+
+void lightUp(led *l, int board){
+
+unsigned int i = pixel[l->y][l->x] + colors_offset[l->color];
+unsigned int val;
+if (board == 0)
+{
+
+# 203
+PORTA = ~(0x01 << (i % 8));
+
+val = 0x01 << (i / 8);
+if(val == 5){
+PORTC = 6;
+} else {
+PORTB = val;
+}
+} else if (board == 1)
+{
+
+PORTD = ~(0x01 << (i % 8));
+
+PORTE = 0x01 << (i / 8);
+} else if (board == 2)
+{
+
+# 224
+val = ~(0x01 << (i % 8));
+if(val == 7)
+PORTC = 7;
+else {
+PORTF = val;
+}
+
+val = 0x01 << (i / 8);
+if (val < 5)
+{
+PORTG = val;
+} else {
+PORTC = val - 5;
+}
+PORTJ = val;
+} else if (board == 3)
+{
+
+PORTH = ~(0x01 << (i % 8));
+
+PORTJ = 0x01 << (i / 8);
 }
 }

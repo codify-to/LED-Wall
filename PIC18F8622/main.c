@@ -141,6 +141,8 @@ void main (void)
 	{
 		led *l = &ledList[board][i];
 		l->intensity = 0;
+		l->x = i % 4;
+		l->y = i / 4;
 	}
 	lcdLed = &ledList[0];
 
@@ -170,7 +172,7 @@ void main (void)
 		// {
 		// 	led *l = &ledList[board][i];
 		// 	lightUp(l, board);
-		// 	Delay10KTCYx(20);
+		// 	// Delay10KTCYx(20);
 		// }
 
 		for (unsigned int color = 0; color < 4; ++color)
@@ -181,7 +183,7 @@ void main (void)
 
 			PORTH = ~(0x01 << (p % 8)); //GROUND
 			PORTJ = 0x01 << (p / 8); //1 << j; // VCC
-			Delay10KTCYx(20);
+			// Delay10KTCYx(20);
 		}
 
 	}

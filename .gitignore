@@ -16,4 +16,6 @@
 *.out
 *.app
 
+Slave.X.production.*
+
 .DS_Store
