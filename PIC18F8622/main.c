@@ -15,9 +15,6 @@ LED Structure and control
 	64 leds. 
 */
 unsigned int ledList[4*64];
-unsigned int ledX[4*64];
-unsigned int ledY[4*64];
-unsigned int ledC[4*64];
 unsigned char colors_offset[4] = {0, 1, 4, 5};
 unsigned char pixel[4][4] = {
 	{0,  32,  8, 40},
@@ -25,7 +22,6 @@ unsigned char pixel[4][4] = {
 	{16, 48, 24, 56},
 	{18, 50, 26, 58}
 };
-inline void lightUp(unsigned int address);
 
 /***************************
 Interrupt
@@ -198,9 +194,6 @@ void main (void)
 	// so, they will start off
 	for (int i = 0; i < 4*64; ++i){
 		ledList[i] = 0;
-		ledX[i] = i >> 4 & 0b11;
-		ledY[i] = i >> 2 & 0b11;
-		ledC[i] = i & 0b11;
 	}
 	
 	//Desliga SPI
@@ -266,72 +259,6 @@ void main (void)
 		// 	// Delay10KTCYx(20);
 		// }
 
-	}
-}
-
-inline void lightUp(unsigned int address){
-
-	intensity = ledList[address];
-	// if (intensity == 0) return;
-
-	board = address >> 6 & 0b11;
-	board = 3;
-	x = address >> 4 & 0b11;
-	y = address >> 2 & 0b11;
-	c = address & 0b11;
-	i = pixel[y][x] + colors_offset[c];
-
-	return;
-
-	if (board == 0)
-	{
-		/****
-		 This board has special cases
-		 *****/
-
-		// GND
-		LATA = ~(0x01 << (i % 8));
-		// VCC
-		val = 0x01 << (i / 8);
-		if(val == 5){
-			LATC = 6;
-		} else {
-			LATB = val; //1 << j; // VCC
-		}
-	} else if (board == 1)
-	{
-		// GND
-		LATD = ~(0x01 << (i % 8));
-		// VCC
-		LATE = 0x01 << (i / 8);
-	} else if (board == 2)
-	{
-		/****
-		 This board has special cases
-		 *****/
-
-		// GND
-		val = ~(0x01 << (i % 8));
-		if(val == 7)
-			LATC = 7;
-		else {
-			LATF = val;
-		}
-		// VCC
-		val = 0x01 << (i / 8);
-		if (val < 5)
-		{
-			LATG = val;
-		} else {
-			LATC = val - 5;
-		}
-		LATJ = val; // VCC
-	} else if (board == 3)
-	{
-		// GND
-		LATH = ~(0x01 << (i % 8));
-		// VCC
-		LATJ = 0x01 << (i / 8);
 	}
 }
 
