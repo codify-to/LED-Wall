@@ -13,9 +13,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        selectionareawidget.cpp
+        selectionareawidget.cpp \
+    previewwidget.cpp
 
-HEADERS  += selectionareawidget.h
+HEADERS  += selectionareawidget.h \
+    previewwidget.h
 
 # FORMS    += selectionareawidget.ui
 

@@ -8,7 +8,7 @@
 #include <QPainter>
 #include <QDesktopWidget>
 #include <QTimer>
-
+#include "previewwidget.h"
 
 class SelectionAreaWidget : public QWidget
 {
@@ -28,9 +28,15 @@ private:
     QMenu *contextMenu;
     QAction *quitAction;
     QAction *toggleSelectionAction;
+    QAction *showPreviewAction;
+
+    // Screen grabbing
+    QRect *normalizedSelectedArea;
+    PreviewWidget *previewWindow;
 
     // Timers
     QTimer *hideWindowTimer;
+    QTimer *grabScreenTimer;
 
 protected:
     void mouseMoveEvent(QMouseEvent *event);
@@ -42,6 +48,8 @@ public slots:
     void toggleSelectionArea();
     void quit();
     void hideWindowTimeout();
+    void grabScreen();
+    void showPreview();
 };
 
 #endif // SELECTIONAREAWIDGET_H
