@@ -62,18 +62,20 @@ void initializeTimer(){
 	IFS0bits.T5IF=0;		/*Cleans the interruption flag*/
 }
 
+
 void turnOnLed(int board, int x, int y, int color)
 {
-    unsigned int p;
+    unsigned int p = pixel[y][x] + colors_offset[color];;
     
     if (board == 0){
-        p = pixel[y][x] + colors_offset[color];
         LATB = ((0x01 << (p % 8))) | ((0x01 << (p / 8)) << 8);
     } else if (board == 1){
 
     } else if (board == 2){
-        p = pixel[y][x] + colors_offset[color];
         LATD = ((0x01 << (p % 8))) | ((0x01 << (p / 8)) << 8);
+    } else {
+        LATE = ((0x01 << (p % 8)));
+        LATG = (((0x01 << (p / 8)) & 0xf0) << 8) | ((0x01 << (p / 8)) & 0x0f);
     }
     
     // Delay
@@ -150,99 +152,10 @@ void main()
 
         while(1)
         {
-            // Reset all pixels
-//            LATDbits.LATD15 = 1;
-//            LATDbits.LATD14 = 1;
-//            LATDbits.LATD13 = 1;
-//            LATDbits.LATD12 = 1;
-//            LATDbits.LATD11 = 1;
-//            LATDbits.LATD10 = 1;
-//            LATDbits.LATD9 = 1;
-//            LATDbits.LATD8 = 1;
-//            LATDbits.LATD7 = 1;
-//            LATDbits.LATD6 = 1;
-//            LATDbits.LATD5 = 1;
-//            LATDbits.LATD4 = 1;
-//            LATDbits.LATD3 = 1;
-//            LATDbits.LATD2 = 1;
-//            LATDbits.LATD1 = 1;
-//            LATDbits.LATD0 = 1;
-
-            // SendDataBuffer(uart_buffer, 7);
-//            PORTD = 0xff;
-//            LATD = 0b1111111111111111;
-//            PORTD = 0xff;
-//            LATD = 0b1 << 4;
-//            bozo = 0xff;
-//            LATD = 0b000001000000010;//bozo; //0b000001000000010;
-//            LATD = 0b000000100000001;
-//            LATD = 0b010000000100000;
-//            LATD = 0b1111111000000001;
-//          LATD = 0b0000000000000010;
-//            LATD = 0b0000000000000101;
-//            LATD = 0b0000000000000110;
-
-            // A direita é ground
-
-//            i = 39+24;
-//            LATD = ((0x01 << (i % 8))) | ((0x01 << (i / 8)) << 8); //GROUND
-
-//            for (x = 0; x < 32; x+=8)
-//            {
-//                i = 36 + x;
-//              LATD = ((0x01 << (i % 8))) | ((0x01 << (i / 8)) << 8); //GROUND
-//
-//              bozo = 0;
-//               while(++bozo < 1999999){}
-//            }
-
-            
-//            for (y = 0; y < 4; ++y)
-//            for (x = 0; x < 4; ++x)
-//            for (color = 0; color < 4; ++color)
-//            {
-//                    i = pixel[y][x] + colors_offset[color];
-//                    LATD = ((0x01 << (i % 8))) | ((0x01 << (i / 8)) << 8);
-//
-//                    i = 0;
-//                    while(++i < 500000){}
-//            }
-
-
-//            for (color = 0; color < 4; ++color) {
-//
-//              turnOnLed(0, 0, color);
-//              turnOnLed(1, 0, color);
-//
-//
-//              turnOnLed(0, 2, color);
-//              turnOnLed(1, 2, color);
-//
-//
-//              turnOnLed(0, 1, color);
-//              turnOnLed(0, 3, color);
-//
-//
-//              turnOnLed(2, 0, (color+1)%4);
-//              turnOnLed(3, 0, (color+1)%4);
-//
-//
-//              turnOnLed(2, 2, (color+1)%4);
-//              turnOnLed(3, 2, (color+1)%4);
-//
-//
-//              turnOnLed(2, 1, (color+1)%4);
-//              turnOnLed(2, 3, (color+1)%4);
-//
-//              LATD = 0b0;
-//
-//               i = 0;
-//                    while(++i < 100000){}
-//            }
 
             for (y = 0; y < 4; ++y)
             for (x = 0; x < 4; ++x)
-            for (color = 0; color < 4; ++color)
+            for (color = 0; color < 4; color+=4)//TODO ++color)
             for (b = 0; b < BOARDS; ++b)
             {
 //                if(color % 2 == 1)
@@ -263,6 +176,10 @@ void main()
 //                }
 
                 turnOnLed(b, x, y, color);
+
+//              ((0x01 << (p % 8))) | ((0x01 << (p / 8)) << 8);
+//                LATE = 0b000001000000;
+//                LATG = 0b00000001000000000000;
                 i = 0;
                 while(++i < 100000){}
             }
