@@ -18,5 +18,6 @@
 
 Slave.X.production.*
 COMMIT_Slave.X/dist/
+screenStreamer/build-*
 
 .DS_Store
