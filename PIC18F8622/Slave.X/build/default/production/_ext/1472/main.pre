@@ -8640,16 +8640,8 @@ ctrl_lcd_cursor (0);
 
 #pragma config EBTRB = OFF
 
-# 10 "../main.c"
-typedef struct {
-unsigned int x;
-unsigned int y;
-unsigned int color;
-unsigned char intensity;
-} led;
-
-# 20
-led ledList[4][64];
+# 19 "../main.c"
+unsigned int ledList[4*64];
 unsigned char colors_offset[4] = {0, 1, 4, 5};
 unsigned char pixel[4][4] = {
 {0, 32, 8, 40},
@@ -8657,61 +8649,112 @@ unsigned char pixel[4][4] = {
 {16, 48, 24, 56},
 {18, 50, 26, 58}
 };
-void lightUp(led *l, int board);
 
+# 31
+void startTimer0();
+unsigned int timeCounter=0;
 
+# 37
 char mensagem_lcd[17];
-
 unsigned int transmissoes = 0;
 unsigned char update_lcd = 1;
 
-# 40
+# 45
 unsigned char ledData[2];
 unsigned char totalBytes;
 int recBytes=0;
-led *lcdLed;
+unsigned int i, x, y, c, board, intensity, val;
+
+unsigned int _x;
+unsigned int _y;
+unsigned int _board;
+unsigned int _color;
+unsigned int _p;
 
 void interrupt receiveData(void){
 
-if(PIR1bits.SSP1IF)
+# 64
+if (INTCONbits.TMR0IF)
 {
-transmissoes ++;
-PORTBbits.RB1 = 1;
+for (board = 0; board < 4; ++board)
+for (_color = 0; _color < 4; ++_color)
+for (_x = 0; _x < 4; ++_x)
+for (_y = 0; _y < 4; ++_y)
+{
+_p = pixel[_y][_x] + colors_offset[_color];
 
 
-totalBytes = SSP1BUF;
-SSP1BUF = 0;
 
 
-recBytes = 0;
-while(recBytes < totalBytes)
+intensity = ledList[
+(board << 6) +
+(_x << 4) +
+(_y << 2) +
+(_color)
+];
+
+if(intensity > timeCounter) {
+if (board == 0)
 {
 
-while(!SSP1STATbits.BF);
+# 91
+LATA = ~(0x01 << (_p % 8));
 
-
-ledData[recBytes] = SSP1BUF;
-SSP1BUF = 0;
-
-recBytes++;
+val = 0x01 << (_p / 8);
+if(val == 5){
+LATC = 6;
+} else {
+LATB = val;
 }
-recBytes=0;
+} else if (board == 1)
+{
+
+LATD = ~(0x01 << (_p % 8));
+
+LATE = 0x01 << (_p / 8);
+} else if (board == 2)
+{
+
+# 112
+val = ~(0x01 << (_p % 8));
+if(val == 7)
+LATC = 7;
+else {
+LATF = val;
+}
+
+val = 0x01 << (_p / 8);
+if (val < 5)
+{
+LATG = val;
+} else {
+LATC = val - 5;
+}
+LATJ = val;
+} else if (board == 3)
+{
+
+LATH = ~(0x01 << (_p % 8));
+
+LATJ = 0x01 << (_p / 8);
+}
+} else {
+
+LATH=0x00;
+LATJ=0x00;
+}
 
 
-unsigned int board = ledData[0] >> 6 & 0b11;
-unsigned int x = ledData[0] >> 4 & 0b11;
-unsigned int y = ledData[0] >> 2 & 0b11;
-led* l = &ledList[board][x + y*4];
-l->x = x;
-l->y = y;
-l->color = ledData[0] & 0b11;
-l->intensity = ledData[1];
 
-lcdLed = l;
 
-update_lcd = 1;
-PORTBbits.RB1 = 0;
-PIR1bits.SSP1IF = 0;
+}
+
+++timeCounter;
+if (timeCounter >= 60)
+timeCounter = 0;
+
+LATAbits.LATA0 = ~LATAbits.LATA0;
+INTCONbits.TMR0IF=0;
 }
 }
 
@@ -8757,106 +8800,68 @@ PORTG=0x00;
 PORTH=0x00;
 
 PORTJ=0xff;
+Delay10KTCYx(200);
+PORTJ=0x00;
 
 INTCONbits.GIE=1;
 PEIE = 1;
 
 lcd_start();
 
+int board, x, y, c;
 
 
-for (int board = 0; board < 4; ++board)
-for (int i = 0; i < 64; ++i)
-{
-led *l = &ledList[board][i];
-l->intensity = 0;
-l->x = i % 4;
-l->y = i / 4;
+
+for (int i = 0; i < 4*64; ++i){
+ledList[i] = 0;
 }
-lcdLed = &ledList[0];
+
+ledList[0b11111100] = 50;
 
 
 (SSP1CON1 &=0xDF);
-
 
 OpenSPI1(0b00000100,0b00000000,0b00000000);
 
 
 PIR1bits.SSP1IF = 0;
-PIE1bits.SSP1IE = 1;
+PIE1bits.SSP1IE = 0;
+
+
+startTimer0();
 
 while(1)
 {
 
 if(update_lcd)
 {
-sprintf(mensagem_lcd, "T=%d x:%d y:%d c:%d ", transmissoes, lcdLed->x, lcdLed->y, lcdLed->color);
+sprintf(mensagem_lcd, "T=%d", transmissoes);
 mostra_lcd_buff(1,1, mensagem_lcd,16);
 
 update_lcd=0;
 }
 
-# 178
-for (unsigned int color = 0; color < 4; ++color)
-for (unsigned int x = 0; x < 4; ++x)
-for (unsigned int y = 0; y < 4; ++y)
-{
-unsigned int p = pixel[y][x] + colors_offset[color];
+if(PIR1bits.SSP1IF){
 
-PORTH = ~(0x01 << (p % 8));
-PORTJ = 0x01 << (p / 8);
-
+# 270
+PIR1bits.SSP1IF = 0;
 }
 
 }
 }
 
-void lightUp(led *l, int board){
-
-unsigned int i = pixel[l->y][l->x] + colors_offset[l->color];
-unsigned int val;
-if (board == 0)
+void startTimer0()
 {
 
-# 203
-PORTA = ~(0x01 << (i % 8));
+INTCONbits.TMR0IF=0;
+INTCONbits.TMR0IE=1;
+INTCON2bits.TMR0IP=1;
 
-val = 0x01 << (i / 8);
-if(val == 5){
-PORTC = 6;
-} else {
-PORTB = val;
-}
-} else if (board == 1)
-{
-
-PORTD = ~(0x01 << (i % 8));
-
-PORTE = 0x01 << (i / 8);
-} else if (board == 2)
-{
-
-# 224
-val = ~(0x01 << (i % 8));
-if(val == 7)
-PORTC = 7;
-else {
-PORTF = val;
-}
-
-val = 0x01 << (i / 8);
-if (val < 5)
-{
-PORTG = val;
-} else {
-PORTC = val - 5;
-}
-PORTJ = val;
-} else if (board == 3)
-{
-
-PORTH = ~(0x01 << (i % 8));
-
-PORTJ = 0x01 << (i / 8);
-}
+T0CONbits.TMR0ON=0;
+T0CONbits.T08BIT=1;
+T0CONbits.T0CS=0;
+T0CONbits.T0SE=0;
+T0CONbits.PSA=0;
+T0CONbits.T0PS=0b100;
+T0CONbits.TMR0ON=1;
 }

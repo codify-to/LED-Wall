@@ -29,7 +29,7 @@ unsigned char pixel[4][4] = {
 Interrupt
 ***************************/
 void startTimer0();
-
+unsigned int timeCounter=0;
 
 /*********
 Debug vars
@@ -63,17 +63,6 @@ void interrupt receiveData(void){
 	// 
 	if (INTCONbits.TMR0IF)
 	{
-		// Cleanup
-		// LATA=0x00;
-		// LATB=0x00;
-		// LATC=0x00;
-		// LATD=0x00;
-		// LATE=0x00;
-		// LATF=0x00;
-		// LATG=0x00;
-		// LATH=0x00;
-		// LATJ=0x00;
-
 		for (board = 0; board < 4; ++board)
 		for (_color = 0; _color < 4; ++_color)
 		for (_x = 0; _x < 4; ++_x)
@@ -91,7 +80,7 @@ void interrupt receiveData(void){
 				(_color)
 			];
 
-			if(intensity > 0) {
+			if(intensity > timeCounter) {
 				if (board == 0)
 				{
 					/****
@@ -142,6 +131,10 @@ void interrupt receiveData(void){
 					// VCC
 					LATJ = 0x01 << (_p / 8);
 				}
+			} else {
+				// // Cleanup
+				// LATH=0x00;
+				// LATJ=0x00;
 			}
 
 			
@@ -149,8 +142,11 @@ void interrupt receiveData(void){
 			// Delay10KTCYx(20);
 		}
 
-		LATAbits.LATA0 = ~LATAbits.LATA0;
+		++timeCounter;
+		if (timeCounter >= 60)
+			timeCounter = 0;
 
+		LATAbits.LATA0 = ~LATAbits.LATA0;
 		INTCONbits.TMR0IF=0;
 	}
 }
@@ -213,7 +209,7 @@ void main (void)
 		ledList[i] = 0;
 	}
 
-	//ledList[0b11111110] = 255;
+	//ledList[0b11111100] = 50;
 	
 	//Desliga SPI
 	CloseSPI();

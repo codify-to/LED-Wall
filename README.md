@@ -14,6 +14,12 @@ You'll need this one: MPLAB® XC8
 
 ## Master-slave protocol
 
-byte0: size
-byte1: board,x,y,color
-byte2: led intensity
+byte0: size  
+byte1: board,x,y,color  
+byte2: led intensity  
+
+
+## Reading the searial messages:
+	
+	screen /dev/tty.usbmodem* 9600
+#### To quit screen: <code>ctrl-a k</code>
