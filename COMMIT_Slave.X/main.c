@@ -70,7 +70,8 @@ void turnOnLed(int board, int x, int y, int color)
     if (board == 0){
         LATB = ((0x01 << (p % 8))) | ((0x01 << (p / 8)) << 8);
     } else if (board == 1){
-
+        LATA = (0x01 << (p / 8));
+        LATF = ((0x01 << (p % 8)));
     } else if (board == 2){
         LATD = ((0x01 << (p % 8))) | ((0x01 << (p / 8)) << 8);
     } else {
@@ -155,7 +156,7 @@ void main()
 
             for (y = 0; y < 4; ++y)
             for (x = 0; x < 4; ++x)
-            for (color = 0; color < 4; color+=4)//TODO ++color)
+            for (color = 0; color < 4; color++)//TODO ++color)
             for (b = 0; b < BOARDS; ++b)
             {
 //                if(color % 2 == 1)
@@ -177,9 +178,18 @@ void main()
 
                 turnOnLed(b, x, y, color);
 
-//              ((0x01 << (p % 8))) | ((0x01 << (p / 8)) << 8);
-//                LATE = 0b000001000000;
-//                LATG = 0b00000001000000000000;
+//                    LATA = (0x01 << (p / 8));
+//                    // Samba do criolo doido
+//                    unsigned int aux = ((0x01 << (p % 8)));
+//                    LATF = aux & 0b11110011;
+//                    LATB = (aux & 0b00001100) << 4;
+
+//                LATA = 0b10000;
+//                LATF = 0b0;
+//                LATB = 0
+//                LATA = 0b1;
+//                LATA = LATB = LATC = LATD = LATE = LATF = 0xff;
+
                 i = 0;
                 while(++i < 100000){}
             }
