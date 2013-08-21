@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QApplication>
 #include <QScreen>
+#include <QSettings>
 
 #define FPS 1000/24
 #define LED_WALL_WIDTH 24
@@ -11,6 +12,11 @@
 SelectionAreaWidget::SelectionAreaWidget(QWidget *parent) :
     QWidget(parent)
 {
+    /******
+     * App settings
+     **/
+    QSettings settings("commit", "led_wall");
+
     /*****
      * System tray
      **/
@@ -36,24 +42,22 @@ SelectionAreaWidget::SelectionAreaWidget(QWidget *parent) :
     /*****
      * Selection Area
      **/
-    selectedArea = new QRect();;
+    QDesktopWidget desktop;
+    QRect storedValue = settings.value("selectedArea", QRect(0, 0, desktop.width(), desktop.height())).toRect();
+    selectedArea = new QRect(storedValue.topLeft(), storedValue.bottomRight());
     hideWindowTimer = new QTimer(this);
     hideWindowTimer->setSingleShot(true);
     connect(hideWindowTimer, SIGNAL(timeout()), this, SLOT(hideWindowTimeout()));
     // Window setup
-    QDesktopWidget desktop;
     resize(desktop.width(), desktop.height());
     setMask(QRegion(0, 0, desktop.width(), desktop.height()));
     setStyleSheet("background:transparent;");
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
 
-    //DEBUG
-    //show();
-
     /****
      * screen grabbing
      **/
-    normalizedSelectedArea = new QRect(0, 0, desktop.width(), desktop.height());
+    normalizedSelectedArea = new QRect(selectedArea->x(), selectedArea->y(), selectedArea->width(), selectedArea->height());
     grabScreenTimer = new QTimer(this);
     connect(grabScreenTimer, SIGNAL(timeout()), this, SLOT(grabScreen()));
     grabScreenTimer->start(FPS);
@@ -103,8 +107,11 @@ void SelectionAreaWidget::mouseReleaseEvent(QMouseEvent *event)
     // Normalize the selected area (optimization)
     int x = selectedArea->left() + std::min(selectedArea->width(), 0);
     int y = selectedArea->top() + std::min(selectedArea->height(), 0);
-    delete normalizedSelectedArea;
-    normalizedSelectedArea = new QRect(x, y, std::abs(selectedArea->width()), std::abs(selectedArea->height()));
+    normalizedSelectedArea->setRect(x, y, std::abs(selectedArea->width()), std::abs(selectedArea->height()));
+
+    // Save value
+    QSettings settings("commit", "led_wall");
+    settings.setValue("selectedArea", *normalizedSelectedArea);
 
     // Needs redraw
     update();
