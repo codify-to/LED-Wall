@@ -42,6 +42,7 @@ private:
     // Serial communication
     QString currentPortName;
     QSerialPort serial;
+    QImage *lastFrame;
     void startSerialComunication(QString portName=NULL);
 protected:
     void mouseMoveEvent(QMouseEvent *event);

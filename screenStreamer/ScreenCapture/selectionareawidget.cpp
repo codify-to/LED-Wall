@@ -81,6 +81,7 @@ SelectionAreaWidget::SelectionAreaWidget(QWidget *parent) :
      * Comunication
      **/
     startSerialComunication();
+    lastFrame = new QImage();
 }
 
 /***
@@ -164,6 +165,7 @@ void SelectionAreaWidget::hideWindowTimeout()
  **/
 void SelectionAreaWidget::grabScreen()
 {
+    // Take a screenshot of the selected rectangle
     QPixmap screenTexture = QGuiApplication::primaryScreen()->grabWindow(
                 QApplication::desktop()->winId(),
                 normalizedSelectedArea->x(),
@@ -177,6 +179,21 @@ void SelectionAreaWidget::grabScreen()
     if(previewWindow->isVisible())
         previewWindow->setImage(screenTexture.scaled(LED_WALL_WIDTH*3, LED_WALL_HEIGHT*3,Qt::KeepAspectRatio));
 
+    // Should we send it via serial interface?
+    if(serial.isOpen()){
+        QList<int> pixelsToSend;
+        QImage img = screenTexture.toImage();
+        for(int x=0; x < img.width(); x++)
+        for(int y=0; y < img.height(); y++)
+        {
+            if(lastFrame->pixel(x, y) != img.pixel(x, y))
+                pixelsToSend.append(img.pixel(x, y));
+        }
+        qDebug() << "Pixels to send " << pixelsToSend.size();
+
+        delete lastFrame;
+        lastFrame = new QImage(img);
+    }
 }
 
 void SelectionAreaWidget::showPreview()
