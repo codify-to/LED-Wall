@@ -4,6 +4,9 @@
 #include <QApplication>
 #include <QScreen>
 #include <QSettings>
+#include <QSerialPort>
+#include <QSerialPortInfo>
+#include <QMessageBox>
 
 #define FPS 1000/24
 #define LED_WALL_WIDTH 24
@@ -36,8 +39,12 @@ SelectionAreaWidget::SelectionAreaWidget(QWidget *parent) :
     contextMenu = new QMenu(this);
     contextMenu->addAction(toggleSelectionAction);
     contextMenu->addAction(showPreviewAction);
-    contextMenu->addAction(quitAction);
+    //
+    QMenu* serialPortsMenu = contextMenu->addMenu("Serial Port");
+    connect(serialPortsMenu, SIGNAL(aboutToShow()), this, SLOT(updateSerialPorts()));
     trayIcon->setContextMenu(contextMenu);
+    //
+    contextMenu->addAction(quitAction);
 
     /*****
      * Selection Area
@@ -48,6 +55,7 @@ SelectionAreaWidget::SelectionAreaWidget(QWidget *parent) :
     hideWindowTimer = new QTimer(this);
     hideWindowTimer->setSingleShot(true);
     connect(hideWindowTimer, SIGNAL(timeout()), this, SLOT(hideWindowTimeout()));
+
     // Window setup
     resize(desktop.width(), desktop.height());
     setMask(QRegion(0, 0, desktop.width(), desktop.height()));
@@ -66,7 +74,12 @@ SelectionAreaWidget::SelectionAreaWidget(QWidget *parent) :
      * Preview
      **/
     previewWindow = new PreviewWidget();
-    previewWindow->resize(LED_WALL_WIDTH * 3, LED_WALL_HEIGHT * 3);
+    previewWindow->resize(LED_WALL_WIDTH * 6, LED_WALL_HEIGHT * 6);
+
+    /****
+     * Comunication
+     **/
+    startSerialComunication();
 }
 
 /***
@@ -170,6 +183,52 @@ void SelectionAreaWidget::showPreview()
     previewWindow->show();
 }
 
+/****
+ * Serial
+ **/
+void SelectionAreaWidget::serialPortSelected()
+{
+    QAction* action = (QAction*) QObject::sender();
+    startSerialComunication(action->text());
+}
+
+void SelectionAreaWidget::startSerialComunication(QString portName)
+{
+    // select the best port if none was given
+    if(portName == NULL)
+    foreach (const QSerialPortInfo &serialPort, QSerialPortInfo::availablePorts()) {
+        if(serialPort.portName().toLower().indexOf("usb") >= 0 ||
+           serialPort.portName().toLower().indexOf("tty") >= 0 ||
+           serialPort.portName().toLower().indexOf("com") >= 0
+        ){
+            portName = serialPort.portName();
+            break;
+        }
+    }
+
+    if(portName == NULL || currentPortName == portName) return;
+
+    serial.close();
+    serial.setPortName(portName);
+    if (!serial.open(QIODevice::ReadWrite)) {
+        QMessageBox msg;
+        msg.setText(tr("Can't open %1, error code %2")
+                    .arg(serial.portName()).arg(serial.error()));
+        msg.exec();
+        return;
+    }
+
+    if (!serial.setBaudRate(QSerialPort::Baud9600)) {
+        QMessageBox msg;
+        msg.setText(tr("Can't set rate 9600 baud to port %1, error code %2")
+                     .arg(serial.portName()).arg(serial.error()));
+        msg.exec();
+        return;
+    }
+
+    currentPortName = portName;
+}
+
 /***
  *Menu Implementation
  **/
@@ -180,6 +239,24 @@ void SelectionAreaWidget::toggleSelectionArea()
 void SelectionAreaWidget::quit()
 {
     QApplication::quit();
+}
+void SelectionAreaWidget::updateSerialPorts()
+{
+    QMenu *serialPortMenu = (QMenu*) QObject::sender();
+    serialPortMenu->clear();
+
+    // Add all serial ports to the list
+    foreach (const QSerialPortInfo &serialPort, QSerialPortInfo::availablePorts()) {
+        QAction *action;
+        if(currentPortName == serialPort.portName())
+            action = new QAction(QIcon(":/check.png"), serialPort.portName(), this);
+        else
+            action = new QAction(serialPort.portName(), this);
+
+        connect(action, SIGNAL(triggered()), this, SLOT(serialPortSelected()));
+        serialPortMenu->addAction(action);
+    }
+
 }
 
 SelectionAreaWidget::~SelectionAreaWidget()

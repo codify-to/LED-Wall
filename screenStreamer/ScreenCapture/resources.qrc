@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file alias="tray_icon.png">resources/tray_icon.png</file>
+        <file alias="check.png">resources/check.png</file>
     </qresource>
 </RCC>

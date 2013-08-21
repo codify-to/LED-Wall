@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,8 +18,6 @@ SOURCES += main.cpp\
 
 HEADERS  += selectionareawidget.h \
     previewwidget.h
-
-# FORMS    += selectionareawidget.ui
 
 RESOURCES += \
     resources.qrc

@@ -8,6 +8,7 @@
 #include <QPainter>
 #include <QDesktopWidget>
 #include <QTimer>
+#include <QSerialPort>
 #include "previewwidget.h"
 
 class SelectionAreaWidget : public QWidget
@@ -38,6 +39,10 @@ private:
     QTimer *hideWindowTimer;
     QTimer *grabScreenTimer;
 
+    // Serial communication
+    QString currentPortName;
+    QSerialPort serial;
+    void startSerialComunication(QString portName=NULL);
 protected:
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent ( QMouseEvent * event );
@@ -50,6 +55,8 @@ public slots:
     void hideWindowTimeout();
     void grabScreen();
     void showPreview();
+    void updateSerialPorts();
+    void serialPortSelected();
 };
 
 #endif // SELECTIONAREAWIDGET_H
