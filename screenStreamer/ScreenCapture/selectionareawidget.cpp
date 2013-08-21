@@ -18,6 +18,7 @@ SelectionAreaWidget::SelectionAreaWidget(QWidget *parent) :
     /******
      * App settings
      **/
+    QApplication::setQuitOnLastWindowClosed(false);
     QSettings settings("commit", "led_wall");
 
     /*****

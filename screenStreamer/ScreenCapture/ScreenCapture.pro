@@ -21,3 +21,6 @@ HEADERS  += selectionareawidget.h \
 
 RESOURCES += \
     resources.qrc
+
+QMAKE_INFO_PLIST = Info.plist
+OTHER_FILES = Info.plist
