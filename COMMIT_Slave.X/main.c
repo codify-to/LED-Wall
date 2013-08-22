@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <plib.h>
 #include <p32xxxx.h>
-#include "uart.h"
+//#include "uart.h"
 #include "SPIInit.h"
 
 // Pic initialization bits
@@ -138,7 +138,7 @@ void main()
 	initializeTimer();
 
 	// Initialize serial communication
-	uart_init();
+//	uart_init();
 
 	// Initialize SPI communication
 	SpiInitDevice(SPI_CHANNEL2, 0, 1, 0);	// initialize the SPI channel 2 as slave, frame slave
@@ -148,7 +148,7 @@ void main()
 	IEC0bits.T5IE=1;		/*Enables T5 interrupt*/
 
 	sprintf(uart_buffer, "I'm alive\n\r");
-	SendDataBuffer(uart_buffer, 11);
+//	SendDataBuffer(uart_buffer, 11);
 
 
         while(1)
@@ -159,36 +159,8 @@ void main()
             for (color = 0; color < 4; color++)//TODO ++color)
             for (b = 0; b < BOARDS; ++b)
             {
-//                if(color % 2 == 1)
-//                {
-//                    j = y;
-//                }
-//                else
-//                {
-//                   j = 3 - y;
-//                }
-//
-//                if((j + color) % 2 == 0) {
-//                    i = x;
-//                }
-//                else
-//                {
-//                    i = 3 - x;
-//                }
 
                 turnOnLed(b, x, y, color);
-
-//                    LATA = (0x01 << (p / 8));
-//                    // Samba do criolo doido
-//                    unsigned int aux = ((0x01 << (p % 8)));
-//                    LATF = aux & 0b11110011;
-//                    LATB = (aux & 0b00001100) << 4;
-
-//                LATA = 0b10000;
-//                LATF = 0b0;
-//                LATB = 0
-//                LATA = 0b1;
-//                LATA = LATB = LATC = LATD = LATE = LATF = 0xff;
 
                 i = 0;
                 while(++i < 100000){}
