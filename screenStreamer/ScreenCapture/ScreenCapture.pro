@@ -24,3 +24,4 @@ RESOURCES += \
 
 QMAKE_INFO_PLIST = Info.plist
 OTHER_FILES = Info.plist
+ICON = icon.icns

@@ -186,10 +186,17 @@ void SelectionAreaWidget::grabScreen()
         for(int x=0; x < img.width(); x++)
         for(int y=0; y < img.height(); y++)
         {
-            if(lastFrame->pixel(x, y) != img.pixel(x, y))
-                pixelsToSend.append(img.pixel(x, y));
+            if(lastFrame->pixel(x, y) != img.pixel(x, y)){
+                //TODO create an image format
+                //pixelsToSend.append({x, y, img.pixel(x, y)});
+            }
         }
         qDebug() << "Pixels to send " << pixelsToSend.size();
+
+//        serial.write(pixelsToSend.size());
+        foreach(const int pixel, pixelsToSend){
+            //TODO send via serial
+        }
 
         delete lastFrame;
         lastFrame = new QImage(img);

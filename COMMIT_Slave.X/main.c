@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <plib.h>
 #include <p32xxxx.h>
-//#include "uart.h"
+#include "uart.h"
 #include "SPIInit.h"
 
 // Pic initialization bits
@@ -34,19 +34,32 @@ unsigned char pixel[4][4] = {
         {34, 35, 32, 33},
         {2,   3,  0,  1}
 };
-unsigned int bozo;
+unsigned int intensity;
 char uart_buffer[32];
 int testBuff = 32;
 
+unsigned int nBytes;
+unsigned int spiData[8];
+unsigned int recvBytes;
+
+
+unsigned int b; // board
+unsigned int x; // column
+unsigned int y; // row
+unsigned int color; // 0 -> green, 1 -> white, 2 -> red, 3 -> blue
+unsigned int i;
+unsigned int j;
+
 /*
- * 
+ * Timer interruption
  */
 
 void __attribute__ (( interrupt(ipl2),vector(_TIMER_5_IRQ))) T5Handler( void)
 {
 	LATCbits.LATC1 = !LATCbits.LATC1;
-
 	IFS0bits.T5IF = 0;			// Clear irq flag
+
+
 }
 
 void initializeTimer(){
@@ -57,7 +70,8 @@ void initializeTimer(){
 	T4CONbits.SIDL = 1;		/*Timer OFF in IDLE mode*/
 	T4CONbits.TCKPS = 3;	/* 1:256 Prescaler*/
 	TMR4 = 0x0; 		   		/*Cleans the timer*/
-	PR4 = (PBFCY/80);		/*Interrupts each 100ms*/
+	//PR4 = (PBFCY/80);		/*Interrupts each 100ms*/
+        PR4 = (PBFCY/10000);
 	T4CONbits.ON = 1; 		/*Turn ON timers 4/5*/
 	IFS0bits.T5IF=0;		/*Cleans the interruption flag*/
 }
@@ -65,6 +79,8 @@ void initializeTimer(){
 
 void turnOnLed(int board, int x, int y, int color)
 {
+    // Turn off everybody
+    LATA = LATB = LATD = LATB = LATE = LATF = LATG = 0;
     unsigned int p = pixel[y][x] + colors_offset[color];;
     
     if (board == 0){
@@ -81,20 +97,8 @@ void turnOnLed(int board, int x, int y, int color)
     
     // Delay
     p = 0;
-    while(++p < 1000){}
+    while(++p < 100){}
 }
-
-unsigned int nBytes;
-unsigned int spiData[8];
-unsigned int recvBytes;
-
-
-unsigned int b; // board
-unsigned int x; // column
-unsigned int y; // row
-unsigned int color; // 0 -> green, 1 -> white, 2 -> red, 3 -> blue
-unsigned int i;
-unsigned int j;
 
 void main()
 {
@@ -138,7 +142,7 @@ void main()
 	initializeTimer();
 
 	// Initialize serial communication
-//	uart_init();
+	uart_init();
 
 	// Initialize SPI communication
 	SpiInitDevice(SPI_CHANNEL2, 0, 1, 0);	// initialize the SPI channel 2 as slave, frame slave
@@ -147,46 +151,71 @@ void main()
  	INTEnableSystemMultiVectoredInt(); /*Enable multi vectored interruption mode*/
 	IEC0bits.T5IE=1;		/*Enables T5 interrupt*/
 
-	sprintf(uart_buffer, "I'm alive\n\r");
+//	sprintf(uart_buffer, "I'm alive\n\r");
 //	SendDataBuffer(uart_buffer, 11);
 
+        // Cleanup default memory values
+	// so, they will start turned 'off'
+	for (i = 0; i < BOARDS*LEDS_PER_BOARD; ++i){
+		ledList[i] = 0;
+	}
 
+        // Startup animation
+        for (b = 0; b < BOARDS; ++b)
+        for (y = 0; y < 4; ++y)
+        for (x = 0; x < 4; ++x){
+            i=0;
+            while(++i < 1000)
+                for (color = 0; color < 4; ++color)
+                    turnOnLed(b, x, y, color);
+        }
+        
+
+        // Main loop
         while(1)
         {
-
-            for (y = 0; y < 4; ++y)
-            for (x = 0; x < 4; ++x)
-            for (color = 0; color < 4; color++)//TODO ++color)
-            for (b = 0; b < BOARDS; ++b)
+            
+            if (SPI2STATbits.SPIRBF)
             {
+            	SPI2STATbits.SPIRBF = 0;
+                IFS1bits.SPI2RXIF = 0;
 
-                turnOnLed(b, x, y, color);
+            	nBytes = SpiChnGetC(2);
 
-                i = 0;
-                while(++i < 100000){}
+                sprintf(uart_buffer, "bytes: 0x%2.2x", nBytes);
+            	SendDataBuffer(uart_buffer, 16);
+
+                turnOnLed(0, 1, 0, nBytes == 2 ? 0 : 2);
+            	recvBytes = 0;
+            	while(recvBytes < nBytes)
+            	{
+            		while(!SPI2STATbits.SPIRBF)
+            			;
+            		SPI2STATbits.SPIRBF = 0;
+            		spiData[recvBytes++] = SpiChnGetC(2);
+            	}
+
+                // Read what was sent
+                for(i = 0; i < nBytes; i++)
+                    turnOnLed(0, 0, 0, i);
+//                for(i = 0; i < nBytes; i+=2){
+//                    if(spiData[i] > 3) spiData[i] = 3;
+//                    turnOnLed(0, 0, 0, spiData[i]);
+//                    //ledList[spiData[i]] = spiData[i+1]+1;
+//                }
+            	sprintf(uart_buffer, "data: 0x%2.2x, 0x%2.2x", spiData[0], spiData[1]);
+            	SendDataBuffer(uart_buffer, 16);
             }
 
-
-
-
-
-//            if (SPI2STATbits.SPIRBF)
-//            {
-//            	SPI2STATbits.SPIRBF = 0;
-//                IFS1bits.SPI2RXIF = 0;
-//
-//            	nBytes = SpiChnGetC(2);
-//            	recvBytes = 0;
-//            	while(recvBytes < nBytes)
-//            	{
-//            		while(!SPI2STATbits.SPIRBF)
-//            			;
-//            		SPI2STATbits.SPIRBF = 0;
-//            		spiData[recvBytes] = SpiChnGetC(2);
-//            		recvBytes++;
-//            	}
-//            	sprintf(uart_buffer, "data: 0x%2.2x, 0x%2.2x", spiData[0], spiData[1]);
-//            	SendDataBuffer(uart_buffer, 16);
+//            // Light the leds up
+//            for (b = 0; b < BOARDS; ++b)
+//            for (y = 0; y < 4; ++y)
+//            for (x = 0; x < 4; ++x)
+//            for (color = 0; color < 4; ++color){
+//                intensity = ledList[ (b << 6) | (x << 4) | (y << 2) | (color) ];
+//                if(intensity > 0){
+//                    turnOnLed(b, x, y, color);
+//                }
 //            }
             
         }
