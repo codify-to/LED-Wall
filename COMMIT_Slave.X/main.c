@@ -97,7 +97,111 @@ void turnOnLed(int board, int x, int y, int color)
     
     // Delay
     p = 0;
-    while(++p < 100){}
+    while(++p < 1400){}
+}
+
+void wait(int count)
+{
+    unsigned int p = 0;
+    while(++p < count){}
+}
+
+void allLedsUpDown(int iterations)
+{
+    unsigned int up = 0;
+    unsigned int it = 0;
+    while(it++ < iterations)
+    {
+        for (b = 0; b < BOARDS; ++b)
+        for (y = 0; y < 4; y++)
+        for (x = 0; x < 4; ++x){
+            i=0;
+            while(++i < 50){
+                for (color = 0; color < 4; ++color) {
+                    if(up == 0) turnOnLed(b, x, y, color);
+                    else turnOnLed(3 - b, 3 - x, 3 - y, color);
+                }
+            }
+        }
+        up = (up + 1) % 2;
+    }
+}
+
+
+void randomFourSquares(int iterations)
+{
+    unsigned int b1, b2, b3, b4;
+    unsigned int x1, x2, x3, x4;
+    unsigned int y1, y2, y3, y4;
+    unsigned int color1, color2, color3, color4;
+
+    unsigned int it = 0;
+    while(it++ < iterations)
+    {
+        b1 = rand() % BOARDS;
+        x1 = rand() % 4;
+        y1 = rand() % 4;
+        color1 = rand() % 4;
+        b2 = rand() % BOARDS;
+        x2 = rand() % 4;
+        y2 = rand() % 4;
+        color2 = rand() % 4;
+        b3 = rand() % BOARDS;
+        x3 = rand() % 4;
+        y3 = rand() % 4;
+        color3 = rand() % 4;
+        b4 = rand() % BOARDS;
+        x4 = rand() % 4;
+        y4 = rand() % 4;
+        color4 = rand() % 4;
+        i = 0;
+        while(++i < 1000) {
+            turnOnLed(b1, x1, y1, color1);
+            turnOnLed(b2, x2, y2, color2);
+            turnOnLed(b3, x3, y3, color3);
+            turnOnLed(b4, x4, y4, color4);
+        }
+    }
+}
+
+void randomColorBoards(int iterations)
+{
+    unsigned int it = 0;
+    while(it++ < iterations)
+    {
+        b = rand() % 4;
+        color = rand() % 4;
+        i = 0;
+        while(++i < 200) {
+            for (y = 0; y < 4; y++)
+            for (x = 0; x < 4; ++x)
+                turnOnLed(b, x, y, color);
+        }
+    }
+}
+
+void raindrops(int iterations)
+{
+    unsigned int b1;
+    unsigned int x1;
+    unsigned int y1;
+
+    x1 = rand() % 4;
+
+    unsigned int it = 0;
+    while(it++ < iterations)
+    {
+        b1 = (it / 4) % 4;
+        y1 = (it % 4);
+        if(b1 == 0 && y1 == 0)
+            x1 = rand() % 4;
+        
+        i = 0;
+        
+        while(++i < 500) {
+            turnOnLed(b1, x1, y1, 3);
+        }
+    }
 }
 
 void main()
@@ -160,14 +264,15 @@ void main()
 		ledList[i] = 0;
 	}
 
-        // Startup animation
-        for (b = 0; b < BOARDS; ++b)
-        for (y = 0; y < 4; ++y)
-        for (x = 0; x < 4; ++x){
-            i=0;
-            while(++i < 1000)
-                for (color = 0; color < 4; ++color)
-                    turnOnLed(b, x, y, color);
+
+
+        // Demo mode
+        while(1)
+        {
+            raindrops(16 * 4);
+            allLedsUpDown(2);
+            randomFourSquares(10);
+            randomColorBoards(10);
         }
         
 
